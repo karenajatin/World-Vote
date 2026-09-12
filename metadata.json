@@ -1,0 +1,6 @@
+{
+  "name": "Global Vote",
+  "description": "A real-time global voting application where users can vote on diverse topics and see live results.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,35 @@
+{
+  "profiles": {
+    "g_test123": {
+      "uid": "g_test123",
+      "name": "Jatin Karena",
+      "email": "karenajatin425@gmail.com",
+      "gender": "Male",
+      "age": 24,
+      "provider": "google.com",
+      "photoURL": "",
+      "updatedAt": 1789233079407
+    }
+  },
+  "votes": [
+    {
+      "id": "v_1789233081128_mtzps",
+      "uid": "g_test123",
+      "userName": "Jatin Karena",
+      "userEmail": "karenajatin425@gmail.com",
+      "gender": "Male",
+      "age": 24,
+      "topicId": "tea-coffee",
+      "topicTitle": "Chai vs Coffee",
+      "optionIndex": 0,
+      "optionLabel": "Chai",
+      "timestamp": 1789233081128,
+      "dateFormatted": "9/12/2026, 5:11:21 PM"
+    }
+  ],
+  "counts": {
+    "tea-coffee": {
+      "0": 1
+    }
+  }
+}

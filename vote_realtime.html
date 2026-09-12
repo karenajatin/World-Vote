@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Global Vote — Live Voting & Voter Data</title>
+<style>
+:root{--bg:#070914;--panel:rgba(17,22,40,.82);--line:rgba(255,255,255,.1);--text:#eef1f8;--muted:#8f98af;--a:#7c6ff0;--b:#4cc9c4;--succ:#3ddc84}
+*{box-sizing:border-box;margin:0;padding:0;max-width:100%}html{overflow-x:hidden;max-width:100vw}body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;min-height:100vh;overflow-x:hidden;width:100%}
+body:before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse 900px 500px at 10% -5%,#4cc9c428,transparent 60%),radial-gradient(ellipse 800px 500px at 90% 0,#7c6ff02b,transparent 60%)}
+body:after{content:"";position:fixed;inset:0;z-index:-1;opacity:.18;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:70px 70px;pointer-events:none}
+header{position:sticky;top:0;z-index:50;background:#070914e0;backdrop-filter:blur(20px);border-bottom:1px solid var(--line);width:100%}
+.nav,.hero,.stats,.search,.list,footer{max-width:1020px;width:100%;margin:auto}
+.nav{padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.logo{font-weight:800;letter-spacing:-.02em;font-size:15px;display:flex;align-items:center;flex-shrink:0}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--b),var(--a));box-shadow:0 0 12px var(--b);margin-right:8px}
+.nav-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.data-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#232b47,#161c32);border:1px solid #7c6ff060;color:#fff;border-radius:10px;padding:6px 12px;font-size:11.5px;font-weight:750;cursor:pointer;transition:.2s;box-shadow:0 2px 10px rgba(124,111,240,.2)}
+.data-btn:hover{filter:brightness(1.15);transform:translateY(-1px);border-color:var(--b)}
+.data-badge{background:var(--a);color:#fff;font-size:10px;padding:2px 6px;border-radius:99px;font-weight:800}
+.user-pill{display:flex;align-items:center;gap:7px;background:#111628;border:1px solid var(--line);border-radius:99px;padding:4px 10px 4px 5px;font-size:11px;color:#cbd5e1}
+.avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));display:grid;place-items:center;color:#fff;font-weight:800;font-size:11px;flex-shrink:0}
+.user-tag{color:var(--b);font-size:10px;font-weight:700}
+.logout{background:none;border:1px solid var(--line);color:#9aa3bd;border-radius:8px;padding:5px 8px;cursor:pointer;font-size:10.5px}
+.logout:hover{background:#ffffff15;color:#fff}
+.hero{padding:24px 16px 14px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid #f0b42935;background:#f0b42910;color:#f0c65d;font-size:9.5px;font-weight:850;letter-spacing:.1em;text-transform:uppercase}
+.live{width:6px;height:6px;border-radius:50%;background:#4cff9b;box-shadow:0 0 8px #4cff9b}
+h1{font-size:clamp(22px,6vw,34px);line-height:1.15;letter-spacing:-.03em;margin:10px 0 6px}
+.hero p{color:var(--muted);max-width:700px;line-height:1.55;font-size:13px}
+.stats{padding:0 16px;display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:6px 12px;border:1px solid var(--line);background:#111628a8;border-radius:999px;color:var(--muted);font-size:11px;display:flex;align-items:center;gap:5px}
+.chip strong{color:#fff}
+.search{padding:0 16px;margin-top:14px}
+.search input{width:100%;height:44px;border-radius:14px;border:1px solid var(--line);background:#111628b8;color:#fff;padding:0 14px;outline:none;font-size:13.5px}
+.search input:focus{border-color:var(--b);box-shadow:0 0 0 3px #4cc9c414}
+.list{padding:0 16px;margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-height:20px;width:100%}
+.card{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:14px;backdrop-filter:blur(15px);width:100%;overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:rgba(255,255,255,.2)}
+.head{display:flex;justify-content:space-between;gap:8px;margin-bottom:10px;align-items:center}
+.title{font-weight:750;display:flex;gap:8px;align-items:center;font-size:14px;min-width:0}
+.title span:first-child{flex-shrink:0;font-size:17px}
+.title span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.total{font-size:10px;color:var(--muted);white-space:nowrap;padding:4px 9px;border:1px solid var(--line);border-radius:999px;flex-shrink:0}
+.bar{height:28px;display:flex;border-radius:999px;overflow:hidden;border:1px solid #05060a;background:#0a0c15;margin-bottom:10px;width:100%}
+.seg{display:flex;align-items:center;justify-content:center;min-width:0;flex-shrink:1;transition:flex-basis .45s cubic-bezier(.22,1,.36,1);font-size:9.5px;font-weight:800;text-shadow:0 1px 2px #000;overflow:hidden;white-space:nowrap;padding:0 4px}
+.buttons{display:flex;flex-wrap:wrap;gap:8px;width:100%}
+.vote{flex:1 1 calc(50% - 4px);min-width:0;max-width:100%;height:38px;border:1px solid transparent;border-radius:999px;color:#fff;font-weight:750;cursor:pointer;transition:.15s;box-shadow:0 3px 10px #0004;font-size:12px;padding:0 10px;display:flex;align-items:center;justify-content:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;position:relative}
+.vote:active{transform:scale(.98)}
+.vote:hover{filter:brightness(1.12)}
+.vote.my-choice{border-color:#fff;box-shadow:0 0 14px rgba(76,201,196,.5);font-weight:850}
+.vote.my-choice:after{content:"✓";font-size:11px;background:#ffffff30;border-radius:50%;width:16px;height:16px;display:inline-grid;place-items:center;margin-left:4px}
+.count{opacity:.85;font-size:10.5px}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);display:none;font-size:13px}
+footer{padding:24px 16px 40px;color:#69738a;font-size:11px;text-align:center;border-top:1px solid var(--line);margin-top:28px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:999px;background:#fff;color:#111;font-size:11.5px;font-weight:800;transition:.25s;z-index:100;pointer-events:none;max-width:90vw;text-align:center;box-shadow:0 10px 30px #000a}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* VOTER DATA MODAL */
+.modal-backdrop{position:fixed;inset:0;background:#000a;backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-backdrop.show{display:flex}
+.modal{width:min(900px,100%);max-height:90vh;background:#0e1322;border:1px solid var(--line);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 90px #000d}
+.modal-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:#12182b}
+.modal-title{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px}
+.close-btn{background:none;border:1px solid var(--line);color:#9aa3bd;border-radius:50%;width:32px;height:32px;cursor:pointer;display:grid;place-items:center;font-size:14px}
+.close-btn:hover{background:#ffffff15;color:#fff}
+.modal-body{padding:20px;overflow-y:auto;flex:1}
+.modal-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px}
+.m-card{background:#141b30;border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.m-card span{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+.m-card strong{font-size:19px;color:#fff;letter-spacing:-.02em}
+.export-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.export-left{display:flex;gap:8px;flex-wrap:wrap}
+.exp-btn{background:#7c6ff0;color:#fff;border:0;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:750;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
+.exp-btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.exp-btn.secondary{background:#1b2238;color:#9eb0d8;border:1px solid var(--line)}
+.filter-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.filter-bar input,.filter-bar select{height:38px;border-radius:10px;border:1px solid var(--line);background:#13192c;color:#fff;padding:0 12px;font-size:12px;outline:none}
+.filter-bar input{flex:1;min-width:180px}
+.table-wrapper{border:1px solid var(--line);border-radius:14px;overflow-x:auto;background:#0d1222}
+table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}
+th{background:#141b30;color:var(--muted);font-weight:750;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05);color:#d1d7e5;white-space:nowrap}
+tr:hover td{background:#ffffff05}
+.voter-cell{display:flex;align-items:center;gap:8px}
+.mini-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));display:grid;place-items:center;font-size:9px;font-weight:800;color:#fff}
+.choice-pill{display:inline-block;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:800;color:#fff}
+.empty-table{padding:30px;text-align:center;color:var(--muted);font-size:12.5px}
+</style></head><body>
+
+<header><nav class="nav">
+  <div class="logo"><span class="dot"></span>Global Vote</div>
+  <div class="nav-actions">
+    <button class="data-btn" id="openDataBtn">
+      📊 Voter Data (બધો ડેટા)
+      <span class="data-badge" id="dataBadge">0</span>
+    </button>
+    <div class="user-pill" id="userPill">
+      <span class="avatar" id="avatar">?</span>
+      <div style="display:flex;flex-direction:column;line-height:1.2;">
+        <span id="userName" style="font-weight:700;font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Loading…</span>
+        <span class="user-tag" id="userDemographics">Voter</span>
+      </div>
+      <button class="logout" id="logout">Sign out</button>
+    </div>
+  </div>
+</nav></header>
+
+<section class="hero">
+  <span class="badge"><span class="live"></span>Live Realtime Polls</span>
+  <h1>What does the world choose?</h1>
+  <p>Select your choice on any topic. Every vote records your voter demographics live into Firebase &amp; server analytics.</p>
+</section>
+
+<div class="stats">
+  <div class="chip">Topics <strong id="totalTopics">0</strong></div>
+  <div class="chip">Your votes <strong id="myTaps">0</strong></div>
+  <div class="chip">Total votes cast <strong id="totalVotesSummary">0</strong></div>
+  <div class="chip">Live Sync <strong id="connection" style="color:#4cff9b;">Connecting…</strong></div>
+</div>
+
+<div class="search"><input id="search" placeholder="Search a topic or question…" autocomplete="off"></div>
+
+<main class="list" id="list"></main>
+<div class="empty" id="empty">No matching topics found.</div>
+
+<footer>Every vote is recorded with voter demographics and updates live for everyone.</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- VOTER DATA & AUDIT LOGS MODAL -->
+<div class="modal-backdrop" id="dataModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">📊 Voter Data &amp; Logs (બધા મતદારોનો ડેટા)</div>
+      <button class="close-btn" id="closeDataBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-stats">
+        <div class="m-card">
+          <span>Total Votes Recorded</span>
+          <strong id="mTotalVotes">0</strong>
+        </div>
+        <div class="m-card">
+          <span>Unique Voters</span>
+          <strong id="mUniqueVoters">0</strong>
+        </div>
+        <div class="m-card">
+          <span>Top Gender</span>
+          <strong id="mTopGender">-</strong>
+        </div>
+        <div class="m-card">
+          <span>Topics Voted</span>
+          <strong id="mTopicsActive">0</strong>
+        </div>
+      </div>
+
+      <div class="export-bar">
+        <div class="export-left">
+          <button class="exp-btn" id="downloadCsvBtn">
+            📥 Download CSV (Excel)
+          </button>
+          <button class="exp-btn secondary" id="refreshDataBtn">
+            🔄 Refresh Data
+          </button>
+        </div>
+        <span style="font-size:11px;color:var(--muted);">Updated in real-time</span>
+      </div>
+
+      <div class="filter-bar">
+        <input id="dataSearch" placeholder="Search voter name, email, or topic…">
+        <select id="topicFilter">
+          <option value="">All Topics</option>
+        </select>
+        <select id="genderFilter">
+          <option value="">All Genders</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>Voter</th>
+              <th>Email</th>
+              <th>Demographics</th>
+              <th>Topic</th>
+              <th>Voted Choice</th>
+            </tr>
+          </thead>
+          <tbody id="voterTableBody">
+            <tr><td colspan="6" class="empty-table">Loading voter records…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import {getDatabase,ref,onValue,runTransaction,set,push} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAFO4mdALmJjQabTYbmsd6M7PdoS_Lo2Yw",
+  authDomain: "dasaram-425.firebaseapp.com",
+  databaseURL: "https://dasaram-425-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "dasaram-425",
+  storageBucket: "dasaram-425.firebasestorage.app",
+  messagingSenderId: "155976787148",
+  appId: "1:155976787148:web:647a89706e0f19151c8e69"
+};
+
+let app, auth, db;
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getDatabase(app);
+} catch(e) {
+  console.warn("Firebase init error:", e);
+}
+
+const topics = [
+  { id:'sun-moon', title:'Sun vs Moon', emoji:'☀️', options:[{l:'Sun'},{l:'Moon'}] },
+  { id:'android-iphone', title:'Android vs iPhone', emoji:'📱', options:[{l:'Android'},{l:'iPhone'}] },
+  { id:'day-night', title:'Day vs Night', emoji:'🌗', options:[{l:'Day'},{l:'Night'}] },
+  { id:'gender', title:'Male vs Female', emoji:'⚧️', options:[{l:'Male'},{l:'Female'}] },
+  { id:'tea-coffee', title:'Tea vs Coffee', emoji:'☕', options:[{l:'Tea'},{l:'Coffee'}] },
+  { id:'cricket-football', title:'Cricket vs Football', emoji:'⚽', options:[{l:'Cricket'},{l:'Football'}] },
+  { id:'countries', title:'Which country are you voting from?', emoji:'🌍', multi:true, options:[
+    {l:'India'},{l:'USA'},{l:'Russia'},{l:'UK'},{l:'China'},{l:'Brazil'},{l:'Germany'},{l:'Japan'},{l:'Canada'},{l:'Australia'},{l:'Other'}
+  ]},
+  { id:'veg-nonveg', title:'Vegetarian vs Non-Vegetarian', emoji:'🥗', options:[{l:'Vegetarian'},{l:'Non-Vegetarian'}] },
+  { id:'city-village', title:'City vs Village', emoji:'🏙️', options:[{l:'City'},{l:'Village'}] },
+  { id:'whatsapp-telegram', title:'WhatsApp vs Telegram', emoji:'💬', options:[{l:'WhatsApp'},{l:'Telegram'}] },
+  { id:'insta-snap', title:'Instagram vs Snapchat', emoji:'📸', options:[{l:'Instagram'},{l:'Snapchat'}] },
+  { id:'youtube-netflix', title:'YouTube vs Netflix', emoji:'🎬', options:[{l:'YouTube'},{l:'Netflix'}] },
+  { id:'age-group', title:'Under 18 vs Over 18', emoji:'🎂', options:[{l:'Under 18'},{l:'Over 18'}] },
+  { id:'married', title:'Married vs Unmarried', emoji:'💍', options:[{l:'Married'},{l:'Unmarried'}] },
+  { id:'pubg-freefire', title:'PUBG vs Free Fire', emoji:'🎮', options:[{l:'PUBG'},{l:'Free Fire'}] },
+  { id:'pc-laptop', title:'PC vs Laptop', emoji:'💻', options:[{l:'PC'},{l:'Laptop'}] },
+  { id:'cat-dog', title:'Cat person vs Dog person', emoji:'🐾', options:[{l:'Cat person'},{l:'Dog person'}] },
+  { id:'coke-pepsi', title:'Coke vs Pepsi', emoji:'🥤', options:[{l:'Coke'},{l:'Pepsi'}] },
+  { id:'movies-industry', title:'Bollywood vs Hollywood vs Dhollywood', emoji:'🎥', multi:true,
+    options:[{l:'Bollywood'},{l:'Hollywood'},{l:'Dhollywood'}] },
+  { id:'business-job', title:'Business vs Job', emoji:'💼', options:[{l:'Business'},{l:'Job'}] },
+  { id:'student-working', title:'School vs College vs Working', emoji:'🎓', multi:true,
+    options:[{l:'School'},{l:'College'},{l:'Working'}] },
+  { id:'govt-private', title:'Government job vs Private job', emoji:'🏢', options:[{l:'Government job'},{l:'Private job'}] },
+  { id:'planets', title:'Favorite planet', emoji:'🪐', multi:true, options:[
+    {l:'Mercury'},{l:'Venus'},{l:'Mars'},{l:'Jupiter'},{l:'Saturn'},{l:'Uranus'},{l:'Neptune'}
+  ]},
+  { id:'sweet-spicy', title:'Sweet vs Spicy', emoji:'🌶️', options:[{l:'Sweet'},{l:'Spicy'}] },
+  { id:'windows-mac', title:'Windows vs Mac', emoji:'🖥️', options:[{l:'Windows'},{l:'Mac'}] },
+  { id:'relationship', title:'Single vs In a relationship', emoji:'💑', options:[{l:'Single'},{l:'In a relationship'}] },
+  { id:'farmer', title:'Farmer vs Not Farmer', emoji:'🌾', options:[{l:'Farmer'},{l:'Not Farmer'}] },
+  { id:'book-movie', title:'Book vs Movie', emoji:'📚', options:[{l:'Book'},{l:'Movie'}] },
+  { id:'cash-online', title:'Cash vs Online payment', emoji:'💳', options:[{l:'Cash'},{l:'Online payment'}] },
+  { id:'early-night', title:'Early riser vs Night owl', emoji:'🌅', options:[{l:'Early riser'},{l:'Night owl'}] },
+  { id:'foodie', title:'Foodie vs Not a foodie', emoji:'🍽️', options:[{l:'Foodie'},{l:'Not a foodie'}] },
+  { id:'homemade-restaurant', title:'Homemade food vs Restaurant food', emoji:'🍳', options:[{l:'Homemade food'},{l:'Restaurant food'}] },
+  { id:'introvert-extrovert', title:'Introvert vs Extrovert', emoji:'🙂', options:[{l:'Introvert'},{l:'Extrovert'}] },
+  { id:'traveler-homebody', title:'Traveler vs Homebody', emoji:'🧳', options:[{l:'Traveler'},{l:'Homebody'}] },
+  { id:'india-regions', title:'North vs South vs East vs West India', emoji:'🗺️', multi:true,
+    options:[{l:'North India'},{l:'South India'},{l:'East India'},{l:'West India'}] },
+  { id:'stream', title:'Science vs Commerce vs Arts vs Other', emoji:'🔬', multi:true,
+    options:[{l:'Science'},{l:'Commerce'},{l:'Arts'},{l:'Other'}] },
+  { id:'music', title:'Music lover vs Not into music', emoji:'🎵', options:[{l:'Music lover'},{l:'Not into music'}] },
+  { id:'house', title:'Own house vs Rented house', emoji:'🏠', options:[{l:'Own house'},{l:'Rented house'}] },
+  { id:'marvel-dc', title:'Marvel vs DC', emoji:'🦸', options:[{l:'Marvel'},{l:'DC'}] },
+  { id:'summer-winter', title:'Summer vs Winter', emoji:'🌡️', options:[{l:'Summer'},{l:'Winter'}] },
+  { id:'horror-comedy', title:'Horror movies vs Comedy movies', emoji:'🎭', options:[{l:'Horror'},{l:'Comedy'}] },
+  { id:'petrol-electric', title:'Petrol vs Electric vehicle', emoji:'🚗', options:[{l:'Petrol'},{l:'Electric'}] },
+  { id:'language', title:'Gujarati vs Hindi vs English speaker', emoji:'🗣️', multi:true,
+    options:[{l:'Gujarati'},{l:'Hindi'},{l:'English'}] },
+  { id:'fresher-experienced', title:'Fresher vs Experienced', emoji:'🧑‍💻', options:[{l:'Fresher'},{l:'Experienced'}] },
+  { id:'khands', title:'Favorite continent', emoji:'🌏', multi:true, options:[
+    {l:'Asia'},{l:'Europe'},{l:'Africa'},{l:'North America'},{l:'South America'},{l:'Australia'},{l:'Antarctica'}
+  ]},
+  { id:'ocean-mountains', title:'Ocean vs Mountains', emoji:'🏔️', options:[{l:'Ocean'},{l:'Mountains'}] },
+  { id:'weekday-weekend', title:'Weekday mood vs Weekend mood', emoji:'📅', options:[{l:'Weekday mood'},{l:'Weekend mood'}] },
+  { id:'handed', title:'Left-handed vs Right-handed', emoji:'✋', options:[{l:'Left-handed'},{l:'Right-handed'}] },
+  { id:'resident', title:'Indian vs Foreign resident', emoji:'🛂', options:[{l:'Indian resident'},{l:'Foreign resident'}] },
+  { id:'morning-evening', title:'Morning person vs Evening person', emoji:'🌇', options:[{l:'Morning person'},{l:'Evening person'}] }
+];
+
+const PALETTE = ["#F0445A","#2E8AFF","#F0B429","#4CC9C4","#7C6FF0","#3DDC84","#FF7A45","#B968E0","#5CC8FF","#E85D9C","#8BC34A"];
+let currentUser = null;
+let voterProfile = null;
+let counts = {};
+let myVotes = {}; // topicId -> optionIndex
+let allVoterLogs = [];
+
+const $ = id => document.getElementById(id);
+
+function esc(v){
+  return String(v||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+
+function toast(m){
+  const t = $("toast");
+  t.textContent = m;
+  t.classList.add("show");
+  clearTimeout(window.tt);
+  window.tt = setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+// Load local vote choices
+try {
+  myVotes = JSON.parse(localStorage.getItem("gv_my_choices") || "{}");
+} catch(_) {}
+
+function updateTapsDisplay(){
+  const totalMyVotes = Object.keys(myVotes).length;
+  $("myTaps").textContent = totalMyVotes;
+}
+updateTapsDisplay();
+
+// Render Topics
+function render(q=""){
+  const list = $("list");
+  list.innerHTML = "";
+  const arr = topics.filter(t => t.title.toLowerCase().includes(q.trim().toLowerCase()));
+  $("empty").style.display = arr.length ? "none" : "block";
+
+  arr.forEach(t => {
+    const c = counts[t.id] || {};
+    const cs = t.options.map((_, i) => Number(c[i] || 0));
+    const total = cs.reduce((a, b) => a + b, 0);
+    const myChoiceIndex = myVotes[t.id];
+
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const seg = t.options.map((o, i) => {
+      const p = total ? (cs[i] / total * 100) : (100 / t.options.length);
+      return `<div class="seg" style="flex-basis:${p}%;background:${PALETTE[i % PALETTE.length]}">${esc(o.l)} ${Math.round(p)}%</div>`;
+    }).join("");
+
+    const btn = t.options.map((o, i) => {
+      const isChosen = myChoiceIndex === i;
+      return `<button class="vote ${isChosen ? 'my-choice' : ''}" data-t="${esc(t.id)}" data-i="${i}" style="background:${PALETTE[i % PALETTE.length]}">${esc(o.l)} <span class="count">${cs[i].toLocaleString()}</span></button>`;
+    }).join("");
+
+    card.innerHTML = `
+      <div class="head">
+        <div class="title"><span>${t.emoji}</span><span>${esc(t.title)}</span></div>
+        <div class="total"><strong>${total.toLocaleString()}</strong> votes</div>
+      </div>
+      <div class="bar">${seg}</div>
+      <div class="buttons">${btn}</div>
+    `;
+    list.appendChild(card);
+  });
+
+  list.querySelectorAll(".vote").forEach(b => {
+    b.onclick = () => castVote(b.dataset.t, Number(b.dataset.i));
+  });
+}
+
+// Cast Vote
+async function castVote(topicId, optionIndex){
+  if (!currentUser) {
+    window.location.href = "auth.html";
+    return;
+  }
+
+  const tObj = topics.find(t => t.id === topicId);
+  const optionLabel = tObj?.options[optionIndex]?.l || `Option ${optionIndex}`;
+  
+  // Update local vote choice
+  myVotes[topicId] = optionIndex;
+  localStorage.setItem("gv_my_choices", JSON.stringify(myVotes));
+  updateTapsDisplay();
+
+  // Instant UI optimistic update
+  if (!counts[topicId]) counts[topicId] = {};
+  counts[topicId][optionIndex] = (Number(counts[topicId][optionIndex]) || 0) + 1;
+  render($("search").value);
+  toast(`Voted for ${optionLabel} ✓`);
+
+  const voterName = voterProfile?.name || currentUser.displayName || "Voter";
+  const voterEmail = voterProfile?.email || currentUser.email || "";
+  const voterGender = voterProfile?.gender || "";
+  const voterAge = voterProfile?.age || null;
+
+  // 1. Send to server persistent store & audit log
+  try {
+    const res = await fetch("/api/vote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        uid: currentUser.uid,
+        userName: voterName,
+        userEmail: voterEmail,
+        gender: voterGender,
+        age: voterAge,
+        topicId: topicId,
+        topicTitle: tObj?.title || topicId,
+        optionIndex: optionIndex,
+        optionLabel: optionLabel
+      })
+    });
+    if (res.ok) {
+      loadVoterData(); // Refresh logs
+    }
+  } catch(e) {
+    console.warn("Server vote save:", e);
+  }
+
+  // 2. Send to Firebase Realtime Database
+  if (db) {
+    try {
+      await runTransaction(ref(db, `votes/${topicId}/${optionIndex}`), v => (Number(v) || 0) + 1);
+      await set(ref(db, `user_votes/${currentUser.uid}/${topicId}`), {
+        optionIndex,
+        optionLabel,
+        timestamp: Date.now()
+      });
+      // push log
+      await push(ref(db, 'vote_logs'), {
+        uid: currentUser.uid,
+        userName: voterName,
+        userEmail: voterEmail,
+        gender: voterGender,
+        age: voterAge,
+        topicId: topicId,
+        topicTitle: tObj?.title || topicId,
+        optionIndex,
+        optionLabel,
+        timestamp: Date.now()
+      });
+    } catch(err) {
+      console.warn("Firebase RTDB vote sync:", err);
+    }
+  }
+}
+
+// Populate Topic Filter in Modal
+const topicSelect = $("topicFilter");
+topics.forEach(t => {
+  const opt = document.createElement("option");
+  opt.value = t.id;
+  opt.textContent = `${t.emoji} ${t.title}`;
+  topicSelect.appendChild(opt);
+});
+
+// Voter Data Modal Handlers
+$("openDataBtn").onclick = () => {
+  $("dataModal").classList.add("show");
+  loadVoterData();
+};
+$("closeDataBtn").onclick = () => $("dataModal").classList.remove("show");
+$("dataModal").onclick = e => {
+  if (e.target === $("dataModal")) $("dataModal").classList.remove("show");
+};
+
+$("refreshDataBtn").onclick = () => loadVoterData();
+
+$("downloadCsvBtn").onclick = () => {
+  window.location.href = "/api/export-csv";
+};
+
+// Fetch and render all voter data
+async function loadVoterData(){
+  try {
+    const res = await fetch("/api/voter-data");
+    if (res.ok) {
+      const data = await res.json();
+      allVoterLogs = data.recentVotes || [];
+      $("dataBadge").textContent = data.totalVotes || allVoterLogs.length;
+      $("totalVotesSummary").textContent = (data.totalVotes || 0).toLocaleString();
+      $("mTotalVotes").textContent = (data.totalVotes || 0).toLocaleString();
+      $("mUniqueVoters").textContent = (data.uniqueVotersCount || 0).toLocaleString();
+      $("mTopicsActive").textContent = Object.keys(data.counts || {}).length;
+
+      // Top gender
+      const genders = data.genderBreakdown || {};
+      let topG = "-";
+      let maxC = 0;
+      Object.entries(genders).forEach(([g, c]) => {
+        if (c > maxC) { maxC = c; topG = `${g} (${c})`; }
+      });
+      $("mTopGender").textContent = topG;
+
+      // Update server counts if available
+      if (data.counts && Object.keys(data.counts).length > 0) {
+        counts = { ...counts, ...data.counts };
+        render($("search").value);
+      }
+
+      renderVoterTable();
+    }
+  } catch(e) {
+    console.warn("Failed to load voter data:", e);
+  }
+}
+
+function renderVoterTable(){
+  const searchQ = $("dataSearch").value.toLowerCase().trim();
+  const selectedTopic = $("topicFilter").value;
+  const selectedGender = $("genderFilter").value;
+
+  const filtered = allVoterLogs.filter(v => {
+    if (selectedTopic && v.topicId !== selectedTopic) return false;
+    if (selectedGender && v.gender !== selectedGender) return false;
+    if (searchQ) {
+      const str = `${v.userName} ${v.userEmail} ${v.topicTitle} ${v.optionLabel}`.toLowerCase();
+      if (!str.includes(searchQ)) return false;
+    }
+    return true;
+  });
+
+  const tbody = $("voterTableBody");
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-table">No votes recorded matching filters.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(v => {
+    const timeStr = new Date(v.timestamp).toLocaleString(undefined, {
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    const initial = (v.userName || "V")[0].toUpperCase();
+    return `
+      <tr>
+        <td style="color:#9aa3bd;font-size:11px;">${timeStr}</td>
+        <td>
+          <div class="voter-cell">
+            <span class="mini-avatar">${initial}</span>
+            <strong style="color:#fff;">${esc(v.userName)}</strong>
+          </div>
+        </td>
+        <td style="color:#a5b4cf;">${esc(v.userEmail || "Google Account")}</td>
+        <td><span style="color:#79d9d5;">${esc(v.gender || "Unspecified")}</span> ${v.age ? `<span style="color:#9aa3bd;">(${v.age}y)</span>` : ''}</td>
+        <td>${esc(v.topicTitle)}</td>
+        <td><span class="choice-pill" style="background:#7c6ff0;">${esc(v.optionLabel)}</span></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+$("dataSearch").oninput = renderVoterTable;
+$("topicFilter").onchange = renderVoterTable;
+$("genderFilter").onchange = renderVoterTable;
+
+// Initialize app session
+function initializeVoterSession(user, profile){
+  currentUser = user;
+  voterProfile = profile || {};
+
+  const dName = profile?.name || user.displayName || user.email?.split("@")[0] || "Voter";
+  $("userName").textContent = dName;
+  $("avatar").textContent = (dName[0] || "U").toUpperCase();
+  
+  const demoText = profile?.gender ? `${profile.gender}${profile.age ? ', ' + profile.age : ''}` : "Voter";
+  $("userDemographics").textContent = demoText;
+  
+  $("totalTopics").textContent = topics.length;
+  render($("search").value);
+
+  // Connect Firebase RTDB Real-time listener
+  if (db) {
+    onValue(ref(db, "votes"), snap => {
+      const live = snap.val();
+      if (live) {
+        counts = { ...counts, ...live };
+        $("connection").textContent = "Live";
+        $("connection").style.color = "#4cff9b";
+        render($("search").value);
+      }
+    }, err => {
+      console.warn("RTDB votes listener error:", err);
+      $("connection").textContent = "Server Sync";
+      $("connection").style.color = "#79d9d5";
+    });
+  } else {
+    $("connection").textContent = "Server Sync";
+    $("connection").style.color = "#79d9d5";
+  }
+
+  loadVoterData();
+}
+
+// Check Profile and Session
+async function checkAndStartUser(u){
+  let prof = null;
+  // Try server
+  try {
+    const res = await fetch(`/api/profile/${u.uid}`);
+    if (res.ok) {
+      const d = await res.json();
+      if (d.profile) prof = d.profile;
+    }
+  } catch(_) {}
+
+  // Try localStorage
+  if (!prof) {
+    try {
+      prof = JSON.parse(localStorage.getItem(`gv_profile_${u.uid}`) || localStorage.getItem("gv_user_profile") || "null");
+    } catch(_) {}
+  }
+
+  // If no profile at all, redirect to auth to complete name, gender, age
+  if (!prof || !prof.name) {
+    window.location.href = "auth.html";
+    return;
+  }
+
+  initializeVoterSession(u, prof);
+}
+
+// Sign Out Handler
+$("logout").onclick = () => {
+  localStorage.removeItem("gv_current_user");
+  localStorage.removeItem("gv_user_profile");
+  if (auth && currentUser && currentUser.uid !== "guest") {
+    signOut(auth).finally(() => window.location.href = "auth.html");
+  } else {
+    window.location.href = "auth.html";
+  }
+};
+
+$("search").oninput = e => render(e.target.value);
+
+// Auth state initialization
+if (auth) {
+  onAuthStateChanged(auth, u => {
+    if (u) {
+      checkAndStartUser(u);
+    } else {
+      // Check localStorage session
+      const savedUser = JSON.parse(localStorage.getItem("gv_current_user") || "null");
+      const savedProf = JSON.parse(localStorage.getItem("gv_user_profile") || "null");
+      if (savedUser && savedProf && savedProf.name) {
+        initializeVoterSession(savedUser, savedProf);
+      } else {
+        window.location.href = "auth.html";
+      }
+    }
+  });
+} else {
+  const savedUser = JSON.parse(localStorage.getItem("gv_current_user") || "null");
+  const savedProf = JSON.parse(localStorage.getItem("gv_user_profile") || "null");
+  if (savedUser && savedProf) {
+    initializeVoterSession(savedUser, savedProf);
+  } else {
+    window.location.href = "auth.html";
+  }
+}
+</script></body></html>
