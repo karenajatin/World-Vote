@@ -116,57 +116,14 @@ app.post('/api/vote', (req, res) => {
   store.counts[topicId][optionIndex] = (store.counts[topicId][optionIndex] || 0) + 1;
 
   saveStore();
-  res.json({ success: true, vote: voteEntry, counts: store.counts[topicId] });
-});
-
-app.get('/api/voter-data', (req, res) => {
-  const totalVotes = store.votes.length;
-  const uniqueVoterUids = new Set(store.votes.map(v => v.uid).filter(u => u && u !== 'anonymous'));
-  const registeredProfilesCount = Object.keys(store.profiles).length;
-
-  // Gender breakdown
-  const genderBreakdown = {};
-  store.votes.forEach(v => {
-    const g = v.gender || 'Unspecified';
-    genderBreakdown[g] = (genderBreakdown[g] || 0) + 1;
-  });
-
-  res.json({
-    totalVotes,
-    uniqueVotersCount: uniqueVoterUids.size || registeredProfilesCount,
-    registeredProfilesCount,
-    genderBreakdown,
-    counts: store.counts,
-    recentVotes: store.votes.slice(-100).reverse(), // Last 100 votes
-    profiles: Object.values(store.profiles)
-  });
-});
-
-app.get('/api/export-csv', (req, res) => {
-  res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', 'attachment; filename="global_vote_data.csv"');
-
-  const headers = ['Vote ID', 'Date & Time', 'Voter Name', 'Email', 'Gender', 'Age', 'Topic Title', 'Chosen Option', 'Topic ID', 'Option Index', 'User UID'];
-  const rows = store.votes.map(v => [
-    `"${v.id}"`,
-    `"${new Date(v.timestamp).toISOString()}"`,
-    `"${(v.userName || '').replace(/"/g, '""')}"`,
-    `"${(v.userEmail || '').replace(/"/g, '""')}"`,
-    `"${v.gender || ''}"`,
-    `"${v.age || ''}"`,
-    `"${(v.topicTitle || '').replace(/"/g, '""')}"`,
-    `"${(v.optionLabel || '').replace(/"/g, '""')}"`,
-    `"${v.topicId}"`,
-    `"${v.optionIndex}"`,
-    `"${v.uid}"`
-  ]);
-
-  const csvLines = [headers.join(','), ...rows.map(r => r.join(','))];
-  const csvContent = csvLines.join('\n') + '\n';
-  res.send(csvContent);
+  res.json({ success: true, counts: store.counts[topicId] });
 });
 
 // Handle explicit routes for vote and auth pages
+app.all('/api/*', (req, res) => {
+  res.status(404).json({ error: 'Endpoint not found or disabled for privacy.' });
+});
+
 app.get(['/vote.html', '/vote', '/vote_realtime.html'], (req, res) => {
   res.sendFile(path.join(__dirname, 'vote_realtime.html'));
 });

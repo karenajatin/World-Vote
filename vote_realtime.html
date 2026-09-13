@@ -12,10 +12,6 @@ header{position:sticky;top:0;z-index:50;background:#070914e0;backdrop-filter:blu
 .nav{padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .logo{font-weight:800;letter-spacing:-.02em;font-size:15px;display:flex;align-items:center;flex-shrink:0}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--b),var(--a));box-shadow:0 0 12px var(--b);margin-right:8px}
-.nav-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.data-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#232b47,#161c32);border:1px solid #7c6ff060;color:#fff;border-radius:10px;padding:6px 12px;font-size:11.5px;font-weight:750;cursor:pointer;transition:.2s;box-shadow:0 2px 10px rgba(124,111,240,.2)}
-.data-btn:hover{filter:brightness(1.15);transform:translateY(-1px);border-color:var(--b)}
-.data-badge{background:var(--a);color:#fff;font-size:10px;padding:2px 6px;border-radius:99px;font-weight:800}
 .user-pill{display:flex;align-items:center;gap:7px;background:#111628;border:1px solid var(--line);border-radius:99px;padding:4px 10px 4px 5px;font-size:11px;color:#cbd5e1}
 .avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));display:grid;place-items:center;color:#fff;font-weight:800;font-size:11px;flex-shrink:0}
 .user-tag{color:var(--b);font-size:10px;font-weight:700}
@@ -53,61 +49,24 @@ h1{font-size:clamp(22px,6vw,34px);line-height:1.15;letter-spacing:-.03em;margin:
 footer{padding:24px 16px 40px;color:#69738a;font-size:11px;text-align:center;border-top:1px solid var(--line);margin-top:28px}
 .toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;padding:10px 16px;border-radius:999px;background:#fff;color:#111;font-size:11.5px;font-weight:800;transition:.25s;z-index:100;pointer-events:none;max-width:90vw;text-align:center;box-shadow:0 10px 30px #000a}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-
-/* VOTER DATA MODAL */
-.modal-backdrop{position:fixed;inset:0;background:#000a;backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
-.modal-backdrop.show{display:flex}
-.modal{width:min(900px,100%);max-height:90vh;background:#0e1322;border:1px solid var(--line);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 90px #000d}
-.modal-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:#12182b}
-.modal-title{font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px}
-.close-btn{background:none;border:1px solid var(--line);color:#9aa3bd;border-radius:50%;width:32px;height:32px;cursor:pointer;display:grid;place-items:center;font-size:14px}
-.close-btn:hover{background:#ffffff15;color:#fff}
-.modal-body{padding:20px;overflow-y:auto;flex:1}
-.modal-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px}
-.m-card{background:#141b30;border:1px solid var(--line);border-radius:14px;padding:12px 14px}
-.m-card span{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
-.m-card strong{font-size:19px;color:#fff;letter-spacing:-.02em}
-.export-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.export-left{display:flex;gap:8px;flex-wrap:wrap}
-.exp-btn{background:#7c6ff0;color:#fff;border:0;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:750;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
-.exp-btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
-.exp-btn.secondary{background:#1b2238;color:#9eb0d8;border:1px solid var(--line)}
-.filter-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.filter-bar input,.filter-bar select{height:38px;border-radius:10px;border:1px solid var(--line);background:#13192c;color:#fff;padding:0 12px;font-size:12px;outline:none}
-.filter-bar input{flex:1;min-width:180px}
-.table-wrapper{border:1px solid var(--line);border-radius:14px;overflow-x:auto;background:#0d1222}
-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}
-th{background:#141b30;color:var(--muted);font-weight:750;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
-td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05);color:#d1d7e5;white-space:nowrap}
-tr:hover td{background:#ffffff05}
-.voter-cell{display:flex;align-items:center;gap:8px}
-.mini-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));display:grid;place-items:center;font-size:9px;font-weight:800;color:#fff}
-.choice-pill{display:inline-block;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:800;color:#fff}
-.empty-table{padding:30px;text-align:center;color:var(--muted);font-size:12.5px}
 </style></head><body>
 
 <header><nav class="nav">
   <div class="logo"><span class="dot"></span>Global Vote</div>
-  <div class="nav-actions">
-    <button class="data-btn" id="openDataBtn">
-      📊 Voter Data (બધો ડેટા)
-      <span class="data-badge" id="dataBadge">0</span>
-    </button>
-    <div class="user-pill" id="userPill">
-      <span class="avatar" id="avatar">?</span>
-      <div style="display:flex;flex-direction:column;line-height:1.2;">
-        <span id="userName" style="font-weight:700;font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Loading…</span>
-        <span class="user-tag" id="userDemographics">Voter</span>
-      </div>
-      <button class="logout" id="logout">Sign out</button>
+  <div class="user-pill" id="userPill">
+    <span class="avatar" id="avatar">?</span>
+    <div style="display:flex;flex-direction:column;line-height:1.2;">
+      <span id="userName" style="font-weight:700;font-size:11px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Loading…</span>
+      <span class="user-tag" id="userDemographics">Voter</span>
     </div>
+    <button class="logout" id="logout">Sign out</button>
   </div>
 </nav></header>
 
 <section class="hero">
   <span class="badge"><span class="live"></span>Live Realtime Polls</span>
   <h1>What does the world choose?</h1>
-  <p>Select your choice on any topic. Every vote records your voter demographics live into Firebase &amp; server analytics.</p>
+  <p>Select your choice on any topic. Results update live across the globe.</p>
 </section>
 
 <div class="stats">
@@ -122,82 +81,9 @@ tr:hover td{background:#ffffff05}
 <main class="list" id="list"></main>
 <div class="empty" id="empty">No matching topics found.</div>
 
-<footer>Every vote is recorded with voter demographics and updates live for everyone.</footer>
+<footer>Every vote is recorded securely in Firebase and updates live for everyone.</footer>
 
 <div class="toast" id="toast"></div>
-
-<!-- VOTER DATA & AUDIT LOGS MODAL -->
-<div class="modal-backdrop" id="dataModal">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title">📊 Voter Data &amp; Logs (બધા મતદારોનો ડેટા)</div>
-      <button class="close-btn" id="closeDataBtn">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-stats">
-        <div class="m-card">
-          <span>Total Votes Recorded</span>
-          <strong id="mTotalVotes">0</strong>
-        </div>
-        <div class="m-card">
-          <span>Unique Voters</span>
-          <strong id="mUniqueVoters">0</strong>
-        </div>
-        <div class="m-card">
-          <span>Top Gender</span>
-          <strong id="mTopGender">-</strong>
-        </div>
-        <div class="m-card">
-          <span>Topics Voted</span>
-          <strong id="mTopicsActive">0</strong>
-        </div>
-      </div>
-
-      <div class="export-bar">
-        <div class="export-left">
-          <button class="exp-btn" id="downloadCsvBtn">
-            📥 Download CSV (Excel)
-          </button>
-          <button class="exp-btn secondary" id="refreshDataBtn">
-            🔄 Refresh Data
-          </button>
-        </div>
-        <span style="font-size:11px;color:var(--muted);">Updated in real-time</span>
-      </div>
-
-      <div class="filter-bar">
-        <input id="dataSearch" placeholder="Search voter name, email, or topic…">
-        <select id="topicFilter">
-          <option value="">All Topics</option>
-        </select>
-        <select id="genderFilter">
-          <option value="">All Genders</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Date &amp; Time</th>
-              <th>Voter</th>
-              <th>Email</th>
-              <th>Demographics</th>
-              <th>Topic</th>
-              <th>Voted Choice</th>
-            </tr>
-          </thead>
-          <tbody id="voterTableBody">
-            <tr><td colspan="6" class="empty-table">Loading voter records…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
@@ -292,7 +178,6 @@ let currentUser = null;
 let voterProfile = null;
 let counts = {};
 let myVotes = {}; // topicId -> optionIndex
-let allVoterLogs = [];
 
 const $ = id => document.getElementById(id);
 
@@ -405,7 +290,12 @@ async function castVote(topicId, optionIndex){
       })
     });
     if (res.ok) {
-      loadVoterData(); // Refresh logs
+      const d = await res.json();
+      if (d.counts) {
+        counts[topicId] = d.counts;
+        updateTotalVotesSummary();
+        render($("search").value);
+      }
     }
   } catch(e) {
     console.warn("Server vote save:", e);
@@ -420,7 +310,7 @@ async function castVote(topicId, optionIndex){
         optionLabel,
         timestamp: Date.now()
       });
-      // push log
+      // push log directly to Firebase RTDB for owner
       await push(ref(db, 'vote_logs'), {
         uid: currentUser.uid,
         userName: voterName,
@@ -433,119 +323,25 @@ async function castVote(topicId, optionIndex){
         optionLabel,
         timestamp: Date.now()
       });
+      updateTotalVotesSummary();
     } catch(err) {
       console.warn("Firebase RTDB vote sync:", err);
     }
   }
 }
 
-// Populate Topic Filter in Modal
-const topicSelect = $("topicFilter");
-topics.forEach(t => {
-  const opt = document.createElement("option");
-  opt.value = t.id;
-  opt.textContent = `${t.emoji} ${t.title}`;
-  topicSelect.appendChild(opt);
-});
-
-// Voter Data Modal Handlers
-$("openDataBtn").onclick = () => {
-  $("dataModal").classList.add("show");
-  loadVoterData();
-};
-$("closeDataBtn").onclick = () => $("dataModal").classList.remove("show");
-$("dataModal").onclick = e => {
-  if (e.target === $("dataModal")) $("dataModal").classList.remove("show");
-};
-
-$("refreshDataBtn").onclick = () => loadVoterData();
-
-$("downloadCsvBtn").onclick = () => {
-  window.location.href = "/api/export-csv";
-};
-
-// Fetch and render all voter data
-async function loadVoterData(){
-  try {
-    const res = await fetch("/api/voter-data");
-    if (res.ok) {
-      const data = await res.json();
-      allVoterLogs = data.recentVotes || [];
-      $("dataBadge").textContent = data.totalVotes || allVoterLogs.length;
-      $("totalVotesSummary").textContent = (data.totalVotes || 0).toLocaleString();
-      $("mTotalVotes").textContent = (data.totalVotes || 0).toLocaleString();
-      $("mUniqueVoters").textContent = (data.uniqueVotersCount || 0).toLocaleString();
-      $("mTopicsActive").textContent = Object.keys(data.counts || {}).length;
-
-      // Top gender
-      const genders = data.genderBreakdown || {};
-      let topG = "-";
-      let maxC = 0;
-      Object.entries(genders).forEach(([g, c]) => {
-        if (c > maxC) { maxC = c; topG = `${g} (${c})`; }
+function updateTotalVotesSummary() {
+  let total = 0;
+  Object.values(counts).forEach(topicVotes => {
+    if (typeof topicVotes === "object" && topicVotes !== null) {
+      Object.values(topicVotes).forEach(v => {
+        total += (Number(v) || 0);
       });
-      $("mTopGender").textContent = topG;
-
-      // Update server counts if available
-      if (data.counts && Object.keys(data.counts).length > 0) {
-        counts = { ...counts, ...data.counts };
-        render($("search").value);
-      }
-
-      renderVoterTable();
     }
-  } catch(e) {
-    console.warn("Failed to load voter data:", e);
-  }
-}
-
-function renderVoterTable(){
-  const searchQ = $("dataSearch").value.toLowerCase().trim();
-  const selectedTopic = $("topicFilter").value;
-  const selectedGender = $("genderFilter").value;
-
-  const filtered = allVoterLogs.filter(v => {
-    if (selectedTopic && v.topicId !== selectedTopic) return false;
-    if (selectedGender && v.gender !== selectedGender) return false;
-    if (searchQ) {
-      const str = `${v.userName} ${v.userEmail} ${v.topicTitle} ${v.optionLabel}`.toLowerCase();
-      if (!str.includes(searchQ)) return false;
-    }
-    return true;
   });
-
-  const tbody = $("voterTableBody");
-  if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="6" class="empty-table">No votes recorded matching filters.</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = filtered.map(v => {
-    const timeStr = new Date(v.timestamp).toLocaleString(undefined, {
-      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
-    const initial = (v.userName || "V")[0].toUpperCase();
-    return `
-      <tr>
-        <td style="color:#9aa3bd;font-size:11px;">${timeStr}</td>
-        <td>
-          <div class="voter-cell">
-            <span class="mini-avatar">${initial}</span>
-            <strong style="color:#fff;">${esc(v.userName)}</strong>
-          </div>
-        </td>
-        <td style="color:#a5b4cf;">${esc(v.userEmail || "Google Account")}</td>
-        <td><span style="color:#79d9d5;">${esc(v.gender || "Unspecified")}</span> ${v.age ? `<span style="color:#9aa3bd;">(${v.age}y)</span>` : ''}</td>
-        <td>${esc(v.topicTitle)}</td>
-        <td><span class="choice-pill" style="background:#7c6ff0;">${esc(v.optionLabel)}</span></td>
-      </tr>
-    `;
-  }).join("");
+  const el = $("totalVotesSummary");
+  if (el) el.textContent = total.toLocaleString();
 }
-
-$("dataSearch").oninput = renderVoterTable;
-$("topicFilter").onchange = renderVoterTable;
-$("genderFilter").onchange = renderVoterTable;
 
 // Initialize app session
 function initializeVoterSession(user, profile){
@@ -560,6 +356,7 @@ function initializeVoterSession(user, profile){
   $("userDemographics").textContent = demoText;
   
   $("totalTopics").textContent = topics.length;
+  updateTotalVotesSummary();
   render($("search").value);
 
   // Connect Firebase RTDB Real-time listener
@@ -570,6 +367,7 @@ function initializeVoterSession(user, profile){
         counts = { ...counts, ...live };
         $("connection").textContent = "Live";
         $("connection").style.color = "#4cff9b";
+        updateTotalVotesSummary();
         render($("search").value);
       }
     }, err => {
@@ -581,8 +379,6 @@ function initializeVoterSession(user, profile){
     $("connection").textContent = "Server Sync";
     $("connection").style.color = "#79d9d5";
   }
-
-  loadVoterData();
 }
 
 // Check Profile and Session

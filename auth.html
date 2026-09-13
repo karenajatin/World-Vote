@@ -1,203 +1,447 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Global Vote — Sign in & Profile</title>
 <style>
-:root{--bg:#070914;--card:rgba(16,20,38,.85);--line:rgba(255,255,255,.1);--text:#f6f7fb;--muted:#9aa3bd;--a:#7c6ff0;--b:#4cc9c4;--err:#ff6b7a}
-*{box-sizing:border-box;margin:0;padding:0}body{min-height:100vh;background:radial-gradient(circle at 10% 5%,rgba(76,201,196,.2),transparent 32%),radial-gradient(circle at 90% 0,rgba(124,111,240,.25),transparent 35%),var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;display:grid;place-items:center;padding:20px}
-body:before{content:"";position:fixed;inset:0;opacity:.2;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
-.shell{width:min(460px,100%)}.brand{text-align:center;font-weight:850;font-size:22px;margin-bottom:18px;display:flex;align-items:center;justify-content:center}.dot{display:inline-block;width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--b),var(--a));box-shadow:0 0 18px var(--b);margin-right:8px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:28px;backdrop-filter:blur(22px);box-shadow:0 25px 80px #0008;position:relative}
-.badge{display:inline-block;padding:7px 11px;border-radius:999px;background:#f0b42912;border:1px solid #f0b42935;color:#f0c65d;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
-h1{font-size:28px;line-height:1.1;letter-spacing:-.04em;margin-bottom:10px}.sub{color:var(--muted);font-size:13.5px;line-height:1.6;margin-bottom:20px}
-.btn{width:100%;height:50px;border:1px solid var(--line);border-radius:14px;background:#151a2d;color:#fff;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px}.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
-.google{background:#fff;color:#111827;border-color:#fff}
-.primary{background:linear-gradient(135deg,#7c6ff0,#4c9cf0);border:0;box-shadow:0 4px 15px rgba(124,111,240,.35)}
-.secondary{background:#1a2138;color:#a6b3d4;border-color:rgba(255,255,255,.12);margin-top:10px}
-.user-quick-btn{background:linear-gradient(135deg,#182038,#13182b);border:1px solid #7c6ff040;border-radius:16px;padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;margin-top:10px;text-align:left;width:100%}
-.user-quick-btn:hover{border-color:var(--b);background:#1d2644;transform:translateY(-1px)}
-.quick-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;font-weight:800;display:grid;place-items:center;font-size:15px;flex-shrink:0}
-.quick-info{flex:1;min-width:0;display:flex;flex-direction:column}
-.quick-name{font-weight:800;font-size:13px;color:#fff}
-.quick-email{font-size:11px;color:#9eb0d6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.quick-badge{font-size:10px;background:#4cc9c420;color:#4cc9c4;border:1px solid #4cc9c440;border-radius:99px;padding:2px 8px;font-weight:750;white-space:nowrap}
-.divider{display:flex;align-items:center;gap:12px;color:#68728b;font-size:10px;margin:18px 0}.divider:before,.divider:after{content:"";height:1px;background:var(--line);flex:1}
-.form{display:none;flex-direction:column;gap:13px}.form.show{display:flex}
-.field{display:flex;flex-direction:column;gap:6px}label{font-size:12px;color:#aeb6ca;font-weight:700}
-input,select{width:100%;height:48px;border:1px solid var(--line);border-radius:13px;background:#0d1222;color:#fff;padding:0 14px;outline:none;font-size:14px}input:focus,select:focus{border-color:var(--b);box-shadow:0 0 0 3px #4cc9c414}
-.link{background:none;border:0;color:#79d9d5;font-size:12px;cursor:pointer;text-align:center;padding:6px}.link:hover{text-decoration:underline}
-.error-box{display:none;margin-top:14px;padding:12px 14px;border-radius:14px;background:#ff6b7a15;border:1px solid #ff6b7a40;color:#ff9aa6;font-size:12.5px;line-height:1.5}
-.error-box.show{display:block}
-.profile{display:none}.profile.show{display:block}.hidden{display:none!important}
-.progress{height:4px;background:#1c2236;border-radius:99px;margin-bottom:20px;overflow:hidden}.progress i{display:block;width:80%;height:100%;background:linear-gradient(90deg,var(--b),var(--a));border-radius:99px}
-.notice{color:#707a92;text-align:center;font-size:11px;line-height:1.5;margin-top:16px}
-.domain-alert{background:#1a1f33;border:1px solid #7c6ff040;border-radius:14px;padding:14px;margin-top:14px;display:none}
-.domain-alert.show{display:block}
-.domain-alert h4{font-size:13px;color:#79d9d5;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.domain-alert p{font-size:12px;color:#a8b2ca;line-height:1.5;margin-bottom:10px}
-.domain-box{display:flex;align-items:center;background:#0d1222;border:1px solid var(--line);border-radius:8px;padding:6px 10px;gap:8px}
-.domain-box code{font-size:11px;color:#f0c65d;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.copy-btn{background:#7c6ff0;color:#fff;border:0;border-radius:6px;padding:5px 9px;font-size:11px;cursor:pointer;font-weight:700}
-.iframe-bar{position:fixed;top:0;left:0;right:0;background:#12182b;border-bottom:1px solid var(--line);padding:8px 16px;display:none;align-items:center;justify-content:space-between;font-size:11px;color:#9aa3bd;z-index:99}
-.iframe-bar.show{display:flex}
-.iframe-bar a{color:#4cc9c4;text-decoration:none;font-weight:700;display:flex;align-items:center;gap:4px}
-.user-preview{display:flex;align-items:center;gap:12px;background:#11162a;padding:12px;border-radius:14px;margin-bottom:16px;border:1px solid var(--line)}
-.user-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));display:grid;place-items:center;font-weight:800;font-size:16px}
-
-/* GOOGLE ACCOUNT CHOOSER MODAL */
-.g-modal-backdrop{position:fixed;inset:0;background:rgba(5,7,15,.75);backdrop-filter:blur(8px);z-index:999;display:none;align-items:center;justify-content:center;padding:16px}
-.g-modal-backdrop.show{display:flex}
-.g-modal{background:#11162b;border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:26px;width:min(420px,100%);box-shadow:0 30px 90px #000;display:flex;flex-direction:column;gap:16px}
-.g-modal-head{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
-.g-modal-head h3{font-size:18px;color:#fff}
-.g-modal-head p{font-size:12px;color:var(--muted)}
-.g-accounts{display:flex;flex-direction:column;gap:8px}
-.g-account-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#151c33;cursor:pointer;transition:.2s;text-align:left}
-.g-account-row:hover{border-color:var(--b);background:#1a2340;transform:translateY(-1px)}
-.g-row-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;font-weight:800;display:grid;place-items:center;font-size:14px;flex-shrink:0}
-.g-row-avatar.alt{background:#232d4b;color:#a5b4cf}
-.g-row-info{flex:1;min-width:0;display:flex;flex-direction:column}
-.g-row-info strong{font-size:13px;color:#fff}
-.g-row-info span{font-size:11px;color:#929eb9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.g-config-notice{background:#161c30;border:1px solid #7c6ff035;border-radius:12px;padding:10px 12px;font-size:11px;color:#a7b5d6;line-height:1.4}
-.g-custom-box{display:none;flex-direction:column;gap:8px;margin-top:6px}
-.g-custom-box.show{display:flex}
-</style></head><body>
+:root {
+  --bg: #070914;
+  --card: rgba(16, 20, 38, 0.9);
+  --line: rgba(255, 255, 255, 0.1);
+  --text: #f6f7fb;
+  --muted: #9aa3bd;
+  --a: #7c6ff0;
+  --b: #4cc9c4;
+  --err: #ff6b7a;
+  --success: #4cff9b;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 10% 5%, rgba(76, 201, 196, 0.18), transparent 32%),
+              radial-gradient(circle at 90% 0, rgba(124, 111, 240, 0.22), transparent 35%),
+              var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.2;
+  background-image: radial-gradient(#fff 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+.shell {
+  width: min(460px, 100%);
+  position: relative;
+  z-index: 1;
+}
+.brand {
+  text-align: center;
+  font-weight: 850;
+  font-size: 22px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.02em;
+}
+.dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--b), var(--a));
+  box-shadow: 0 0 16px var(--b);
+  margin-right: 8px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 30px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(240, 180, 41, 0.1);
+  border: 1px solid rgba(240, 180, 41, 0.25);
+  color: #f0c65d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+h1 {
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+  color: #fff;
+}
+.sub {
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin-bottom: 22px;
+}
+.btn {
+  width: 100%;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #151a2d;
+  color: #fff;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  text-decoration: none;
+}
+.btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn.google {
+  background: #ffffff;
+  color: #111827;
+  border-color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.btn.google:hover:not(:disabled) {
+  background: #f8fafc;
+  filter: none;
+}
+.btn.primary {
+  background: linear-gradient(135deg, var(--a), #4c9cf0);
+  border: none;
+  box-shadow: 0 4px 18px rgba(124, 111, 240, 0.35);
+}
+.btn.secondary {
+  background: #14192b;
+  color: #c5d0e8;
+  border: 1px solid var(--line);
+}
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #68728b;
+  font-size: 11px;
+  font-weight: 700;
+  margin: 18px 0;
+}
+.divider:before,
+.divider:after {
+  content: "";
+  height: 1px;
+  background: var(--line);
+  flex: 1;
+}
+.form {
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+}
+.form.show {
+  display: flex;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+label {
+  font-size: 12px;
+  color: #b0bad2;
+  font-weight: 700;
+}
+input,
+select {
+  width: 100%;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #0d1222;
+  color: #fff;
+  padding: 0 14px;
+  outline: none;
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+input:focus,
+select:focus {
+  border-color: var(--b);
+  box-shadow: 0 0 0 3px rgba(76, 201, 196, 0.15);
+}
+input::placeholder {
+  color: #5d6780;
+}
+.link {
+  background: none;
+  border: 0;
+  color: #79d9d5;
+  font-size: 12.5px;
+  cursor: pointer;
+  text-align: center;
+  padding: 6px;
+  font-weight: 600;
+}
+.link:hover {
+  text-decoration: underline;
+}
+.error-box {
+  display: none;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 107, 122, 0.12);
+  border: 1px solid rgba(255, 107, 122, 0.35);
+  color: #ff9aa6;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.error-box.show {
+  display: block;
+}
+.info-box {
+  display: none;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(124, 111, 240, 0.12);
+  border: 1px solid rgba(124, 111, 240, 0.35);
+  color: #cbd5e1;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.info-box.show {
+  display: block;
+}
+.info-box code {
+  color: #f0c65d;
+  background: #090d1a;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+.profile {
+  display: none;
+}
+.profile.show {
+  display: block;
+}
+.hidden {
+  display: none !important;
+}
+.progress {
+  height: 4px;
+  background: #1c2236;
+  border-radius: 99px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.progress i {
+  display: block;
+  width: 75%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--b), var(--a));
+  border-radius: 99px;
+}
+.notice {
+  color: #69748c;
+  text-align: center;
+  font-size: 11.5px;
+  line-height: 1.5;
+  margin-top: 18px;
+}
+.user-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #12182c;
+  padding: 12px 14px;
+  border-radius: 14px;
+  margin-bottom: 18px;
+  border: 1px solid var(--line);
+}
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--a), var(--b));
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 16px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.verified-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--success);
+  font-weight: 700;
+}
+.iframe-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #12182b;
+  border-bottom: 1px solid var(--line);
+  padding: 8px 16px;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #9aa3bd;
+  z-index: 99;
+}
+.iframe-bar.show {
+  display: flex;
+}
+.iframe-bar a {
+  color: #4cc9c4;
+  text-decoration: none;
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
 
 <div class="iframe-bar" id="iframeBar">
-  <span>💡 Using AI Studio preview? For the smoothest Google login:</span>
+  <span>💡 Using AI Studio preview? For the smoothest Google popup experience:</span>
   <a id="newTabLink" href="#" target="_blank">Open in new tab ↗</a>
 </div>
 
 <main class="shell">
   <div class="brand"><span class="dot"></span>Global Vote</div>
-  
+
   <section class="card">
-    <!-- VIEW 1: LOGIN -->
+    <!-- VIEW 1: AUTH PROVIDER SELECTION -->
     <div id="loginView">
       <span class="badge">Realtime • Global</span>
-      <h1>Join the vote.</h1>
-      <p class="sub">Sign in with Google or Email. Then complete your voter profile to cast your votes live.</p>
-      
+      <h1>Join the vote</h1>
+      <p class="sub">Sign in using your Google account or your email &amp; password to participate in live global polls.</p>
+
       <button class="btn google" id="googleBtn" type="button">
         <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.36 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
         Continue with Google
       </button>
 
-      <button class="user-quick-btn" id="oneTapJatinBtn" type="button">
-        <div class="quick-avatar">J</div>
-        <div class="quick-info">
-          <span class="quick-name">Continue as Jatin Karena</span>
-          <span class="quick-email">karenajatin425@gmail.com</span>
-        </div>
-        <span class="quick-badge">Instant ⚡</span>
-      </button>
-      
       <div class="divider">OR</div>
-      
-      <button class="btn" id="emailOpen">✉️ Continue with Email</button>
-      
-      <div class="domain-alert" id="domainAlert">
-        <h4>⚠️ Firebase Configuration Info</h4>
-        <p id="domainAlertMsg">Google Sign-in provider is not enabled in your Firebase Console:</p>
-        <div class="domain-box">
-          <code id="currentHostCode"></code>
-          <button type="button" class="copy-btn" id="copyDomainBtn">Copy Domain</button>
-        </div>
-        <p style="margin-top:8px;font-size:11px;">
-          👉 <strong>Tip:</strong> Click "Continue as Jatin Karena" above to start voting immediately without Firebase delays!
-        </p>
-      </div>
 
-      <p class="notice">All votes and voter demographics are securely saved and synced live.</p>
+      <button class="btn secondary" id="emailOpenBtn" type="button">
+        ✉️ Continue with Email
+      </button>
+
+      <div class="info-box" id="googleInfoBox"></div>
+
+      <p class="notice">Votes are synced live worldwide. Your voter account and profile are securely authenticated via Firebase.</p>
     </div>
 
-    <!-- VIEW 2: EMAIL FORM -->
+    <!-- VIEW 2: EMAIL FORM (SIGN IN / CREATE ACCOUNT) -->
     <form class="form" id="emailForm">
-      <span class="badge">Email account</span>
-      <h1 id="emailTitle">Create account</h1>
-      <p class="sub">Use an email and password. You can switch to Sign in below.</p>
-      <div class="field"><label>Email</label><input id="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
-      <div class="field"><label>Password</label><input id="password" type="password" minlength="6" required placeholder="At least 6 characters"></div>
-      <button class="btn primary" id="emailSubmit">Create account</button>
-      <button class="link" type="button" id="emailMode">Already have an account? Sign in</button>
-      <button class="link" type="button" id="emailBack">← Back to Options</button>
+      <span class="badge" id="emailBadge">Email Authentication</span>
+      <h1 id="emailTitle">Sign in with Email</h1>
+      <p class="sub" id="emailSub">Enter your verified email and password to log in.</p>
+
+      <div class="field">
+        <label for="email">Email address</label>
+        <input id="email" type="email" required autocomplete="email" placeholder="name@example.com">
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" minlength="6" required autocomplete="current-password" placeholder="Enter password (min. 6 characters)">
+      </div>
+
+      <button class="btn primary" id="emailSubmitBtn" type="submit">Sign In</button>
+      <button class="link" type="button" id="emailToggleModeBtn">Don't have an account? Create one</button>
+      <button class="link" type="button" id="emailBackBtn">← Back to sign-in options</button>
     </form>
 
     <!-- VIEW 3: PROFILE FORM -->
     <section class="profile" id="profileView">
       <div class="progress"><i></i></div>
-      <span class="badge">Almost ready</span>
-      <h1>Complete your profile.</h1>
-      <p class="sub">Enter your details so your vote can be recorded with accurate demographics.</p>
-      
+      <span class="badge">Profile Details</span>
+      <h1>Complete your voter profile</h1>
+      <p class="sub">Please provide your basic details so your vote can be recorded with accurate demographics.</p>
+
       <div class="user-preview">
         <div class="user-avatar" id="profileAvatar">?</div>
         <div>
           <strong id="profileEmailDisplay" style="font-size:13px;display:block;color:#fff;"></strong>
-          <span style="font-size:11px;color:#8f99b2;" id="profileProviderDisplay">Google Account</span>
+          <span class="verified-tag">✓ Authenticated User</span>
         </div>
       </div>
 
       <form class="form show" id="profileForm">
-        <div class="field"><label>Your full name</label><input id="name" maxlength="60" required placeholder="e.g. Jatin Karena"></div>
-        <div class="field"><label>Gender</label><select id="gender" required><option value="">Choose gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option><option value="Prefer not to say">Prefer not to say</option></select></div>
-        <div class="field"><label>Age</label><input id="age" type="number" min="5" max="120" required placeholder="Your age (e.g. 24)"></div>
-        <button class="btn primary" id="saveProfileBtn">Save Profile & Start Voting</button>
+        <div class="field">
+          <label for="name">Your full name</label>
+          <input id="name" maxlength="60" required placeholder="e.g. Rahul Sharma">
+        </div>
+        <div class="field">
+          <label for="gender">Gender</label>
+          <select id="gender" required>
+            <option value="">Choose gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="age">Age</label>
+          <input id="age" type="number" min="5" max="120" required placeholder="Your age (e.g. 24)">
+        </div>
+        <button class="btn primary" id="saveProfileBtn" type="submit">Save Profile &amp; Start Voting</button>
       </form>
-      <p class="notice">Saved to Firebase Realtime Database & server storage for live analytics.</p>
     </section>
 
-    <!-- ERROR DISPLAY -->
+    <!-- COMMON ERROR DISPLAY -->
     <div class="error-box" id="errorBox"></div>
   </section>
 </main>
 
-<!-- GOOGLE ACCOUNT CHOOSER MODAL -->
-<div class="g-modal-backdrop" id="googlePickerModal">
-  <div class="g-modal">
-    <div class="g-modal-head">
-      <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.36 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
-      <h3>Choose a Google Account</h3>
-      <p id="googleModalSubtitle">Select your account to continue to Global Vote</p>
-    </div>
-
-    <div class="g-accounts">
-      <div class="g-account-row" id="gRowDefault">
-        <div class="g-row-avatar">J</div>
-        <div class="g-row-info">
-          <strong>Jatin Karena</strong>
-          <span>karenajatin425@gmail.com</span>
-        </div>
-        <span class="quick-badge">Sign in →</span>
-      </div>
-
-      <div class="g-account-row" id="gRowCustom">
-        <div class="g-row-avatar alt">+</div>
-        <div class="g-row-info">
-          <strong>Use another Google account</strong>
-          <span>Enter your Google email</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="g-custom-box" id="gCustomBox">
-      <input type="email" id="gCustomEmail" placeholder="yourname@gmail.com" />
-      <button class="btn primary" id="gCustomSubmitBtn" type="button">Sign in with this account</button>
-    </div>
-
-    <div class="g-config-notice" id="gConfigNotice">
-      ℹ️ <strong>Firebase Info:</strong> Google sign-in provider is unconfigured in Firebase (<code>auth/configuration-not-found</code>). Logging in directly with your Google Profile!
-    </div>
-
-    <button class="link" id="gModalCancelBtn" type="button">Cancel</button>
-  </div>
-</div>
-
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import {getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import {getDatabase,ref,get,set} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAFO4mdALmJjQabTYbmsd6M7PdoS_Lo2Yw",
@@ -215,246 +459,266 @@ try {
   auth = getAuth(app);
   db = getDatabase(app);
 } catch (e) {
-  console.warn("Firebase init:", e);
+  console.warn("Firebase initialization error:", e);
 }
 
 const $ = id => document.getElementById(id);
-let emailLogin = false;
-let activeUser = null;
+let isCreateAccountMode = false;
+let authenticatedUser = null;
 
-// Check iframe
+// Check if running inside an iframe
 if (window.self !== window.top) {
   $("iframeBar").classList.add("show");
   $("newTabLink").href = window.location.href;
 }
 
-$("currentHostCode").textContent = window.location.hostname;
-$("copyDomainBtn").onclick = () => {
-  navigator.clipboard.writeText(window.location.hostname);
-  $("copyDomainBtn").textContent = "Copied! ✓";
-  setTimeout(() => $("copyDomainBtn").textContent = "Copy", 2000);
-};
-
 function showError(msg) {
-  $("errorBox").textContent = msg;
-  $("errorBox").classList.add("show");
+  const eb = $("errorBox");
+  eb.textContent = msg;
+  eb.classList.add("show");
 }
 
 function clearError() {
-  $("errorBox").classList.remove("show");
+  const eb = $("errorBox");
+  eb.textContent = "";
+  eb.classList.remove("show");
 }
 
-async function handleProfileCheck(user) {
-  activeUser = user;
-  
-  // Try loading profile from DB
-  let existingProfile = null;
-  try {
-    if (db) {
+function showInfo(htmlContent) {
+  const ib = $("googleInfoBox");
+  ib.innerHTML = htmlContent;
+  ib.classList.add("show");
+}
+
+function clearInfo() {
+  const ib = $("googleInfoBox");
+  ib.innerHTML = "";
+  ib.classList.remove("show");
+}
+
+// Check Profile and Navigate or Display Profile View
+async function handleAuthenticatedUser(user) {
+  authenticatedUser = user;
+  clearError();
+  clearInfo();
+
+  let profile = null;
+
+  // 1. Fetch from Firebase Realtime Database
+  if (db) {
+    try {
       const snap = await get(ref(db, `users/${user.uid}/profile`));
       if (snap.exists()) {
-        existingProfile = snap.val();
+        profile = snap.val();
       }
+    } catch (e) {
+      console.warn("RTDB profile lookup failed:", e);
     }
-  } catch (e) {
-    console.warn("DB profile fetch:", e);
   }
 
-  // Also check server store
-  if (!existingProfile) {
+  // 2. Fetch from server endpoint if not found in RTDB
+  if (!profile) {
     try {
       const res = await fetch(`/api/profile/${user.uid}`);
       if (res.ok) {
         const data = await res.json();
-        if (data.profile) existingProfile = data.profile;
+        if (data.profile) profile = data.profile;
       }
     } catch (_) {}
   }
 
-  // Also check localStorage
-  if (!existingProfile) {
+  // 3. Check localStorage
+  if (!profile) {
     try {
       const local = JSON.parse(localStorage.getItem(`gv_profile_${user.uid}`) || "null");
-      if (local && local.name) existingProfile = local;
+      if (local && local.name) profile = local;
     } catch (_) {}
   }
 
-  if (existingProfile && existingProfile.name && existingProfile.gender) {
-    // Already has complete profile, save to session and redirect
+  // If user already has a complete profile, save session and go to vote.html
+  if (profile && profile.name && profile.gender) {
     localStorage.setItem("gv_current_user", JSON.stringify({
       uid: user.uid,
-      displayName: existingProfile.name,
-      email: user.email || existingProfile.email || "",
+      displayName: profile.name,
+      email: user.email || profile.email || "",
       photoURL: user.photoURL || ""
     }));
-    localStorage.setItem("gv_user_profile", JSON.stringify(existingProfile));
+    localStorage.setItem("gv_user_profile", JSON.stringify(profile));
     window.location.href = "vote.html";
-  } else {
-    // Show Profile View
-    $("loginView").classList.add("hidden");
-    $("emailForm").classList.remove("show");
-    $("profileView").classList.add("show");
-    
-    const dName = user.displayName || (user.email ? user.email.split("@")[0] : "");
-    $("name").value = dName;
-    $("profileEmailDisplay").textContent = user.email || "Google Account";
-    $("profileAvatar").textContent = (dName[0] || "U").toUpperCase();
-    $("profileProviderDisplay").textContent = user.providerData?.[0]?.providerId === "google.com" ? "Verified Google Account" : "Registered Voter";
-  }
-}
-
-function openGoogleAccountPicker(reason) {
-  clearError();
-  if (reason) {
-    $("gConfigNotice").innerHTML = `ℹ️ <strong>Notice:</strong> ${reason}`;
-  }
-  $("googlePickerModal").classList.add("show");
-}
-
-function closeGoogleAccountPicker() {
-  $("googlePickerModal").classList.remove("show");
-  $("gCustomBox").classList.remove("show");
-}
-
-function loginWithGoogleAccount(email, name) {
-  closeGoogleAccountPicker();
-  const em = (email || "karenajatin425@gmail.com").trim();
-  const nm = name || (em.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, l => l.toUpperCase()));
-  const uid = "g_" + btoa(em).replace(/=/g, "").slice(0, 16);
-
-  const googleUser = {
-    uid: uid,
-    email: em,
-    displayName: nm,
-    providerData: [{ providerId: "google.com" }]
-  };
-
-  handleProfileCheck(googleUser);
-}
-
-// 1. One-Tap Quick Button
-$("oneTapJatinBtn").onclick = () => {
-  loginWithGoogleAccount("karenajatin425@gmail.com", "Jatin Karena");
-};
-
-// 2. Google Button
-$("googleBtn").onclick = async () => {
-  clearError();
-  $("domainAlert").classList.remove("show");
-  
-  // Try standard Firebase popup first
-  if (auth) {
-    try {
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
-      const result = await signInWithPopup(auth, provider);
-      if (result && result.user) {
-        await handleProfileCheck(result.user);
-        return;
-      }
-    } catch (e) {
-      console.warn("Firebase Google sign in result:", e.code, e.message);
-      
-      if (e.code === "auth/configuration-not-found") {
-        // Specifically fix the error reported by user!
-        openGoogleAccountPicker("Google Provider is not enabled in your Firebase Console (<code>auth/configuration-not-found</code>). Select your Google account below to proceed right away!");
-        return;
-      } else if (e.code === "auth/unauthorized-domain") {
-        $("domainAlert").classList.add("show");
-        openGoogleAccountPicker("This domain is not in your Firebase Authorized Domains. You can select your account below to proceed without waiting!");
-        return;
-      } else if (e.code === "auth/popup-blocked") {
-        showError("Popup was blocked by your browser. Please click 'Open in new tab' at the top or choose your account below.");
-        openGoogleAccountPicker();
-        return;
-      } else {
-        // Any other error -> allow picking account directly
-        openGoogleAccountPicker(e.message || "Select your account to continue.");
-        return;
-      }
-    }
-  }
-
-  // If Firebase auth is not available
-  openGoogleAccountPicker();
-};
-
-// Modal account rows
-$("gRowDefault").onclick = () => {
-  loginWithGoogleAccount("karenajatin425@gmail.com", "Jatin Karena");
-};
-
-$("gRowCustom").onclick = () => {
-  $("gCustomBox").classList.toggle("show");
-  if ($("gCustomBox").classList.contains("show")) {
-    $("gCustomEmail").focus();
-  }
-};
-
-$("gCustomSubmitBtn").onclick = () => {
-  const customEm = $("gCustomEmail").value.trim();
-  if (!customEm || !customEm.includes("@")) {
-    alert("Please enter a valid Google email address.");
     return;
   }
-  loginWithGoogleAccount(customEm);
+
+  // If profile is incomplete, display Profile Form
+  $("loginView").classList.add("hidden");
+  $("emailForm").classList.remove("show");
+  $("profileView").classList.add("show");
+
+  const displayName = user.displayName || (user.email ? user.email.split("@")[0] : "");
+  $("name").value = displayName;
+  $("profileEmailDisplay").textContent = user.email || "Authenticated Voter";
+  $("profileAvatar").textContent = (displayName[0] || user.email?.[0] || "U").toUpperCase();
+}
+
+// 1. Continue with Google
+$("googleBtn").onclick = async () => {
+  clearError();
+  clearInfo();
+
+  if (!auth) {
+    showError("Authentication service is initializing. Please try again in a moment.");
+    return;
+  }
+
+  $("googleBtn").disabled = true;
+
+  try {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    const result = await signInWithPopup(auth, provider);
+    if (result && result.user) {
+      await handleAuthenticatedUser(result.user);
+    }
+  } catch (err) {
+    console.warn("Google sign in error:", err.code, err.message);
+
+    if (err.code === "auth/popup-closed-by-user") {
+      showError("The Google sign-in window was closed. Please try again.");
+    } else if (err.code === "auth/popup-blocked") {
+      showError("The sign-in popup was blocked by your browser. Please click 'Open in new tab' above or use 'Continue with Email'.");
+    } else if (err.code === "auth/configuration-not-found") {
+      showInfo(`
+        <strong>Google Sign-In is not enabled yet:</strong><br>
+        In your Firebase Console, navigate to <em>Authentication &gt; Sign-in method</em> and enable <strong>Google</strong>.<br>
+        In the meantime, you can sign in right away using <strong>Continue with Email</strong>.
+      `);
+    } else if (err.code === "auth/unauthorized-domain") {
+      showInfo(`
+        <strong>Domain authorization required:</strong><br>
+        Add this domain (<code>${window.location.hostname}</code>) to <em>Firebase Console &gt; Authentication &gt; Settings &gt; Authorized domains</em>.<br>
+        You can also sign in directly using <strong>Continue with Email</strong>.
+      `);
+    } else {
+      showError(err.message || "Failed to sign in with Google. Please check your credentials or use email sign-in.");
+    }
+  } finally {
+    $("googleBtn").disabled = false;
+  }
 };
 
-$("gModalCancelBtn").onclick = closeGoogleAccountPicker;
-$("googlePickerModal").onclick = (e) => {
-  if (e.target === $("googlePickerModal")) closeGoogleAccountPicker();
-};
-
-// 3. Email Handlers
-$("emailOpen").onclick = () => {
+// 2. Continue with Email view switches
+$("emailOpenBtn").onclick = () => {
+  clearError();
+  clearInfo();
   $("loginView").classList.add("hidden");
   $("emailForm").classList.add("show");
-  clearError();
+  // Default to Sign In mode
+  setMode(false);
 };
 
-$("emailBack").onclick = () => {
+$("emailBackBtn").onclick = () => {
+  clearError();
+  clearInfo();
   $("emailForm").classList.remove("show");
   $("loginView").classList.remove("hidden");
+};
+
+function setMode(createMode) {
+  isCreateAccountMode = createMode;
   clearError();
+  if (isCreateAccountMode) {
+    $("emailBadge").textContent = "New Account";
+    $("emailTitle").textContent = "Create an account";
+    $("emailSub").textContent = "Enter your email and create a password of at least 6 characters.";
+    $("emailSubmitBtn").textContent = "Create Account";
+    $("emailToggleModeBtn").textContent = "Already have an account? Sign in";
+    $("password").autocomplete = "new-password";
+  } else {
+    $("emailBadge").textContent = "Email Sign In";
+    $("emailTitle").textContent = "Sign in with Email";
+    $("emailSub").textContent = "Enter your registered email and password to log in.";
+    $("emailSubmitBtn").textContent = "Sign In";
+    $("emailToggleModeBtn").textContent = "Don't have an account? Create one";
+    $("password").autocomplete = "current-password";
+  }
+}
+
+$("emailToggleModeBtn").onclick = () => {
+  setMode(!isCreateAccountMode);
 };
 
-$("emailMode").onclick = () => {
-  emailLogin = !emailLogin;
-  $("emailTitle").textContent = emailLogin ? "Sign in" : "Create account";
-  $("emailSubmit").textContent = emailLogin ? "Sign in" : "Create account";
-  $("emailMode").textContent = emailLogin ? "Need a new account? Create one" : "Already have an account? Sign in";
-};
-
+// 3. Email & Password Form Submission
 $("emailForm").onsubmit = async (e) => {
   e.preventDefault();
   clearError();
-  const em = $("email").value.trim();
-  const pw = $("password").value;
+
+  const emailVal = $("email").value.trim();
+  const passVal = $("password").value;
+
+  if (!emailVal || !emailVal.includes("@")) {
+    showError("Please enter a valid email address.");
+    return;
+  }
+
+  if (!passVal || passVal.length < 6) {
+    showError("Password must be at least 6 characters long.");
+    return;
+  }
+
+  if (!auth) {
+    showError("Authentication service is unavailable. Please try again.");
+    return;
+  }
+
+  $("emailSubmitBtn").disabled = true;
+  $("emailSubmitBtn").textContent = isCreateAccountMode ? "Creating account…" : "Signing in…";
 
   try {
-    const cred = emailLogin 
-      ? await signInWithEmailAndPassword(auth, em, pw) 
-      : await createUserWithEmailAndPassword(auth, em, pw);
-    if (cred && cred.user) {
-      await handleProfileCheck(cred.user);
+    let credential;
+    if (isCreateAccountMode) {
+      // Create user with Email & Password in Firebase Authentication
+      credential = await createUserWithEmailAndPassword(auth, emailVal, passVal);
+    } else {
+      // Sign in user with verified Email & Password in Firebase Authentication
+      credential = await signInWithEmailAndPassword(auth, emailVal, passVal);
+    }
+
+    if (credential && credential.user) {
+      await handleAuthenticatedUser(credential.user);
     }
   } catch (err) {
-    if (err.code === "auth/email-already-in-use") {
-      showError("This email already exists. Click 'Already have an account? Sign in' below.");
+    console.warn("Email auth error:", err.code, err.message);
+
+    if (err.code === "auth/user-not-found") {
+      showError("No account found with this email. Click 'Don't have an account? Create one' to register.");
+    } else if (err.code === "auth/wrong-password") {
+      showError("Incorrect password. Please verify your password and try again.");
+    } else if (err.code === "auth/invalid-credential") {
+      showError("Invalid email or password. Please verify your credentials and try again.");
+    } else if (err.code === "auth/email-already-in-use") {
+      showError("An account already exists with this email. Please switch to 'Sign in' to log in.");
+    } else if (err.code === "auth/weak-password") {
+      showError("Password should be at least 6 characters long.");
+    } else if (err.code === "auth/invalid-email") {
+      showError("Please enter a valid email address format.");
+    } else if (err.code === "auth/too-many-requests") {
+      showError("Too many failed attempts. Access to this account has been temporarily disabled. Try again later.");
     } else {
-      showError(err.message || "Authentication failed.");
+      showError(err.message || "Authentication failed. Please check your credentials.");
     }
+  } finally {
+    $("emailSubmitBtn").disabled = false;
+    $("emailSubmitBtn").textContent = isCreateAccountMode ? "Create Account" : "Sign In";
   }
 };
 
-// 4. Save Profile Form
+// 4. Complete Voter Profile Form Submission
 $("profileForm").onsubmit = async (e) => {
   e.preventDefault();
   clearError();
-  
-  const u = activeUser;
-  if (!u) {
-    showError("Session expired. Please sign in again.");
+
+  const user = authenticatedUser;
+  if (!user) {
+    showError("Your session expired. Please sign in again.");
     return;
   }
 
@@ -462,35 +726,43 @@ $("profileForm").onsubmit = async (e) => {
   const genderVal = $("gender").value;
   const ageVal = Number($("age").value);
 
-  if (!nameVal || !genderVal || !ageVal) {
-    showError("Please fill out all profile fields.");
+  if (!nameVal) {
+    showError("Please enter your full name.");
+    return;
+  }
+  if (!genderVal) {
+    showError("Please select your gender.");
+    return;
+  }
+  if (!ageVal || ageVal < 1 || ageVal > 120) {
+    showError("Please enter a valid age between 1 and 120.");
     return;
   }
 
-  $("saveProfileBtn").textContent = "Saving...";
   $("saveProfileBtn").disabled = true;
+  $("saveProfileBtn").textContent = "Saving Profile…";
 
   const profile = {
-    uid: u.uid,
+    uid: user.uid,
     name: nameVal,
     gender: genderVal,
     age: ageVal,
-    email: u.email || "",
-    provider: u.providerData?.[0]?.providerId || "google.com",
-    photoURL: u.photoURL || "",
-    createdAt: Date.now()
+    email: user.email || "",
+    provider: user.providerData?.[0]?.providerId || "password",
+    photoURL: user.photoURL || "",
+    updatedAt: Date.now()
   };
 
-  // Save to Firebase RTDB
-  try {
-    if (db) {
-      await set(ref(db, `users/${u.uid}/profile`), profile);
+  // 1. Save directly to Firebase Realtime Database
+  if (db) {
+    try {
+      await set(ref(db, `users/${user.uid}/profile`), profile);
+    } catch (err) {
+      console.warn("RTDB profile save failed:", err);
     }
-  } catch (err) {
-    console.warn("RTDB set failed:", err);
   }
 
-  // Save to server database API
+  // 2. Save to server store
   try {
     await fetch("/api/profile", {
       method: "POST",
@@ -498,31 +770,30 @@ $("profileForm").onsubmit = async (e) => {
       body: JSON.stringify(profile)
     });
   } catch (err) {
-    console.warn("Server profile save:", err);
+    console.warn("Server profile save failed:", err);
   }
 
-  // Save to localStorage
-  localStorage.setItem(`gv_profile_${u.uid}`, JSON.stringify(profile));
+  // 3. Save to localStorage session
+  localStorage.setItem(`gv_profile_${user.uid}`, JSON.stringify(profile));
   localStorage.setItem("gv_user_profile", JSON.stringify(profile));
   localStorage.setItem("gv_current_user", JSON.stringify({
-    uid: u.uid,
+    uid: user.uid,
     displayName: profile.name,
     email: profile.email,
     photoURL: profile.photoURL
   }));
 
-  // Request notifications if supported
-  if ("Notification" in window && Notification.permission === "default") {
-    try { await Notification.requestPermission(); } catch (_) {}
-  }
-
   window.location.href = "vote.html";
 };
 
-// Check if already authenticated on load
+// Listen for Firebase auth state change on load
 if (auth) {
   onAuthStateChanged(auth, u => {
-    if (u) handleProfileCheck(u).catch(e => console.warn("Check profile error:", e));
+    if (u) {
+      handleAuthenticatedUser(u).catch(e => console.warn("Session check error:", e));
+    }
   });
 }
-</script></body></html>
+</script>
+</body>
+</html>
