@@ -6,249 +6,299 @@
 <title>Global Vote — Sign in & Profile</title>
 <style>
 :root {
-  --bg: #070914;
-  --card: rgba(16, 20, 38, 0.9);
+  --bg: #0a0a12;
+  --card: rgba(14, 15, 27, 0.86);
   --line: rgba(255, 255, 255, 0.1);
+  --neon-cyan: #00ffff;
+  --neon-pink: #ff2ec4;
+  --neon-lemon: #f2ff2e;
   --text: #f6f7fb;
-  --muted: #9aa3bd;
-  --a: #7c6ff0;
-  --b: #4cc9c4;
-  --err: #ff6b7a;
-  --success: #4cff9b;
+  --muted: #a4adc5;
 }
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
+
 body {
   min-height: 100vh;
-  background: radial-gradient(circle at 10% 5%, rgba(76, 201, 196, 0.18), transparent 32%),
-              radial-gradient(circle at 90% 0, rgba(124, 111, 240, 0.22), transparent 35%),
-              var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0a0a12;
+  background-image:
+    linear-gradient(rgba(255,0,200,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,255,0.08) 1px, transparent 1px);
+  background-size: 26px 26px;
+  position: relative;
+  overflow-x: hidden;
   color: var(--text);
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  display: grid;
-  place-items: center;
-  padding: 24px 16px;
 }
-body:before {
+
+body::before {
   content: "";
   position: fixed;
-  inset: 0;
-  opacity: 0.2;
-  background-image: radial-gradient(#fff 1px, transparent 1px);
-  background-size: 60px 60px;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,46,196,0.07), transparent 45%),
+    radial-gradient(circle at 80% 70%, rgba(0,255,255,0.07), transparent 45%);
   pointer-events: none;
+  z-index: -1;
 }
+
 .shell {
-  width: min(460px, 100%);
+  width: min(470px, 100%);
   position: relative;
   z-index: 1;
 }
+
 .brand {
   text-align: center;
-  font-weight: 850;
-  font-size: 22px;
-  margin-bottom: 20px;
+  font-weight: 900;
+  font-size: 24px;
+  margin-bottom: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   letter-spacing: -0.02em;
+  color: #fff;
 }
+
 .dot {
   display: inline-block;
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--b), var(--a));
-  box-shadow: 0 0 16px var(--b);
-  margin-right: 8px;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 10px var(--neon-cyan), 0 0 16px var(--neon-pink);
+  margin-right: 10px;
 }
+
 .card {
   background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 28px;
-  padding: 30px;
-  backdrop-filter: blur(24px);
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 32px 28px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.1);
   position: relative;
 }
+
 .badge {
-  display: inline-block;
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: 999px;
-  background: rgba(240, 180, 41, 0.1);
-  border: 1px solid rgba(240, 180, 41, 0.25);
-  color: #f0c65d;
+  background: rgba(255, 46, 196, 0.12);
+  border: 1px solid rgba(255, 46, 196, 0.5);
+  color: #ff60d3;
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
+  font-weight: 850;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
+
 h1 {
   font-size: 26px;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
   margin-bottom: 8px;
   color: #fff;
 }
+
 .sub {
   color: var(--muted);
   font-size: 13.5px;
-  line-height: 1.55;
-  margin-bottom: 22px;
+  line-height: 1.6;
+  margin-bottom: 24px;
 }
-.btn {
+
+/* BALANCED BUTTONS - HIGH CONTRAST, SHARP READABLE TEXT, MODERATE GLOW */
+.candy-neon-btn {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  height: 48px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #151a2d;
-  color: #fff;
+  padding: 14px 24px;
+  font-size: 15px;
   font-weight: 750;
+  color: #0f172a;
+  border: 1px solid rgba(255, 46, 196, 0.35);
+  border-radius: 999px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #ffffff 0%, #ffeaf5 100%);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35), 0 0 8px rgba(255, 46, 196, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  font-size: 14px;
   text-decoration: none;
 }
-.btn:hover:not(:disabled) {
-  filter: brightness(1.1);
+
+.candy-neon-btn:hover:not(:disabled) {
   transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.45), 0 0 12px rgba(255, 46, 196, 0.3);
+  border-color: rgba(255, 46, 196, 0.6);
 }
-.btn:disabled {
-  opacity: 0.6;
+
+.candy-neon-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.candy-neon-btn:disabled {
+  opacity: 0.55;
   cursor: not-allowed;
 }
-.btn.google {
-  background: #ffffff;
-  color: #111827;
-  border-color: #ffffff;
-  font-weight: 700;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+
+/* Mint Candy Variant */
+.candy-neon-btn.mint {
+  color: #064e3b;
+  background: linear-gradient(135deg, #ffffff 0%, #dcfce7 100%);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35), 0 0 8px rgba(16, 185, 129, 0.18);
 }
-.btn.google:hover:not(:disabled) {
-  background: #f8fafc;
-  filter: none;
+.candy-neon-btn.mint:hover:not(:disabled) {
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.45), 0 0 12px rgba(16, 185, 129, 0.3);
+  border-color: rgba(16, 185, 129, 0.7);
 }
-.btn.primary {
-  background: linear-gradient(135deg, var(--a), #4c9cf0);
-  border: none;
-  box-shadow: 0 4px 18px rgba(124, 111, 240, 0.35);
+
+/* Lemon Candy Variant */
+.candy-neon-btn.lemon {
+  color: #78350f;
+  background: linear-gradient(135deg, #ffffff 0%, #fef3c7 100%);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35), 0 0 8px rgba(245, 158, 11, 0.18);
 }
-.btn.secondary {
-  background: #14192b;
-  color: #c5d0e8;
-  border: 1px solid var(--line);
+.candy-neon-btn.lemon:hover:not(:disabled) {
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.45), 0 0 12px rgba(245, 158, 11, 0.3);
+  border-color: rgba(245, 158, 11, 0.7);
 }
+
 .divider {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #68728b;
+  gap: 14px;
+  color: #7986a4;
   font-size: 11px;
-  font-weight: 700;
-  margin: 18px 0;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin: 20px 0;
 }
 .divider:before,
 .divider:after {
   content: "";
   height: 1px;
-  background: var(--line);
+  background: rgba(255, 46, 196, 0.25);
   flex: 1;
 }
+
 .form {
   display: none;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 .form.show {
   display: flex;
 }
+
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 label {
-  font-size: 12px;
-  color: #b0bad2;
+  font-size: 12.5px;
+  color: #c1ccdc;
   font-weight: 700;
 }
 input,
 select {
   width: 100%;
-  height: 48px;
-  border: 1px solid var(--line);
-  border-radius: 13px;
-  background: #0d1222;
+  height: 50px;
+  border: 1px solid rgba(0, 255, 255, 0.35);
+  border-radius: 16px;
+  background: rgba(12, 14, 26, 0.88);
   color: #fff;
-  padding: 0 14px;
+  padding: 0 16px;
   outline: none;
   font-size: 14px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 input:focus,
 select:focus {
-  border-color: var(--b);
-  box-shadow: 0 0 0 3px rgba(76, 201, 196, 0.15);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.22), 0 0 22px rgba(255, 46, 196, 0.35);
 }
 input::placeholder {
-  color: #5d6780;
+  color: #616c85;
 }
+
 .link {
   background: none;
   border: 0;
-  color: #79d9d5;
-  font-size: 12.5px;
+  color: #0ff;
+  font-size: 13px;
   cursor: pointer;
   text-align: center;
-  padding: 6px;
-  font-weight: 600;
+  padding: 8px;
+  font-weight: 650;
+  transition: color 0.15s ease;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
 }
 .link:hover {
+  color: #ff60d3;
   text-decoration: underline;
+  text-shadow: 0 0 10px rgba(255, 46, 196, 0.6);
 }
+
 .error-box {
   display: none;
-  margin-top: 14px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(255, 107, 122, 0.12);
-  border: 1px solid rgba(255, 107, 122, 0.35);
-  color: #ff9aa6;
-  font-size: 12.5px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 46, 196, 0.14);
+  border: 1px solid rgba(255, 46, 196, 0.5);
+  color: #ff9ee2;
+  font-size: 13px;
   line-height: 1.5;
+  box-shadow: 0 0 20px rgba(255, 46, 196, 0.2);
 }
 .error-box.show {
   display: block;
 }
+
 .info-box {
   display: none;
-  margin-top: 14px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(124, 111, 240, 0.12);
-  border: 1px solid rgba(124, 111, 240, 0.35);
-  color: #cbd5e1;
-  font-size: 12px;
-  line-height: 1.5;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  color: #d1ecf7;
+  font-size: 12.5px;
+  line-height: 1.55;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.18);
 }
 .info-box.show {
   display: block;
 }
 .info-box code {
-  color: #f0c65d;
-  background: #090d1a;
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-size: 11px;
+  color: #0ff;
+  background: rgba(5, 8, 16, 0.85);
+  padding: 3px 7px;
+  border-radius: 8px;
+  font-size: 12px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
 }
+
 .profile {
   display: none;
 }
@@ -258,79 +308,95 @@ input::placeholder {
 .hidden {
   display: none !important;
 }
+
 .progress {
-  height: 4px;
-  background: #1c2236;
+  height: 5px;
+  background: rgba(25, 29, 48, 0.8);
   border-radius: 99px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .progress i {
   display: block;
   width: 75%;
   height: 100%;
-  background: linear-gradient(90deg, var(--b), var(--a));
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+  box-shadow: 0 0 10px var(--neon-cyan);
   border-radius: 99px;
 }
+
 .notice {
-  color: #69748c;
+  color: #7986a4;
   text-align: center;
-  font-size: 11.5px;
-  line-height: 1.5;
-  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.55;
+  margin-top: 20px;
 }
+
 .user-preview {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: #12182c;
-  padding: 12px 14px;
-  border-radius: 14px;
-  margin-bottom: 18px;
-  border: 1px solid var(--line);
+  gap: 14px;
+  background: rgba(16, 18, 34, 0.85);
+  padding: 14px 16px;
+  border-radius: 18px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
 }
+
 .user-avatar {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--a), var(--b));
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-cyan));
   display: grid;
   place-items: center;
-  font-weight: 800;
-  font-size: 16px;
+  font-weight: 900;
+  font-size: 17px;
   color: #fff;
   flex-shrink: 0;
+  box-shadow: 0 0 14px rgba(255, 46, 196, 0.6);
 }
+
 .verified-tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: var(--success);
-  font-weight: 700;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--neon-cyan);
+  font-weight: 750;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
 }
+
 .iframe-bar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background: #12182b;
-  border-bottom: 1px solid var(--line);
-  padding: 8px 16px;
+  background: rgba(10, 10, 18, 0.95);
+  border-bottom: 1px solid rgba(255, 46, 196, 0.25);
+  padding: 9px 18px;
   display: none;
   align-items: center;
   justify-content: space-between;
-  font-size: 11.5px;
-  color: #9aa3bd;
+  font-size: 12px;
+  color: #a4adc5;
   z-index: 99;
+  backdrop-filter: blur(15px);
 }
 .iframe-bar.show {
   display: flex;
 }
 .iframe-bar a {
-  color: #4cc9c4;
+  color: #0ff;
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 750;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+}
+.iframe-bar a:hover {
+  text-decoration: underline;
 }
 </style>
 </head>
@@ -351,14 +417,14 @@ input::placeholder {
       <h1>Join the vote</h1>
       <p class="sub">Sign in using your Google account or your email &amp; password to participate in live global polls.</p>
 
-      <button class="btn google" id="googleBtn" type="button">
+      <button class="candy-neon-btn" id="googleBtn" type="button">
         <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.36 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
         Continue with Google
       </button>
 
       <div class="divider">OR</div>
 
-      <button class="btn secondary" id="emailOpenBtn" type="button">
+      <button class="candy-neon-btn mint" id="emailOpenBtn" type="button">
         ✉️ Continue with Email
       </button>
 
@@ -383,7 +449,7 @@ input::placeholder {
         <input id="password" type="password" minlength="6" required autocomplete="current-password" placeholder="Enter password (min. 6 characters)">
       </div>
 
-      <button class="btn primary" id="emailSubmitBtn" type="submit">Sign In</button>
+      <button class="candy-neon-btn lemon" id="emailSubmitBtn" type="submit">Sign In</button>
       <button class="link" type="button" id="forgotPasswordBtn">Forgot password?</button>
       <button class="link" type="button" id="emailToggleModeBtn">Don't have an account? Create one</button>
       <button class="link" type="button" id="emailBackBtn">← Back to sign-in options</button>
@@ -399,7 +465,7 @@ input::placeholder {
       <div class="user-preview">
         <div class="user-avatar" id="profileAvatar">?</div>
         <div>
-          <strong id="profileEmailDisplay" style="font-size:13px;display:block;color:#fff;"></strong>
+          <strong id="profileEmailDisplay" style="font-size:13.5px;display:block;color:#fff;"></strong>
           <span class="verified-tag">✓ Authenticated User</span>
         </div>
       </div>
@@ -423,7 +489,7 @@ input::placeholder {
           <label for="age">Age</label>
           <input id="age" type="number" min="5" max="120" required placeholder="Your age (e.g. 24)">
         </div>
-        <button class="btn primary" id="saveProfileBtn" type="submit">Save Profile &amp; Start Voting</button>
+        <button class="candy-neon-btn" id="saveProfileBtn" type="submit">Save Profile &amp; Start Voting</button>
       </form>
     </section>
 
@@ -599,9 +665,9 @@ $("googleBtn").onclick = async () => {
         Please add this domain to <em>Firebase Console &gt; Authentication &gt; Settings &gt; Authorized domains</em>:<br>
         <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
           <code>${window.location.hostname}</code>
-          <button type="button" id="copyHostBtn" style="background:#7c6ff0;border:0;color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;">Copy Domain</button>
+          <button type="button" id="copyHostBtn" style="background:#ff2ec4;border:0;color:#fff;border-radius:99px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 0 10px rgba(255,46,196,0.6);">Copy Domain</button>
         </div>
-        <div style="margin-top:8px;font-size:11.5px;color:#a8b3cc;">Or you can sign in directly using <strong>Continue with Email</strong> below.</div>
+        <div style="margin-top:8px;font-size:11.5px;color:#a4adc5;">Or you can sign in directly using <strong>Continue with Email</strong> below.</div>
       `);
       const copyBtn = document.getElementById("copyHostBtn");
       if (copyBtn) {
@@ -625,7 +691,6 @@ $("emailOpenBtn").onclick = () => {
   clearInfo();
   $("loginView").classList.add("hidden");
   $("emailForm").classList.add("show");
-  // Default to Sign In mode
   setMode(false);
 };
 
@@ -711,10 +776,8 @@ $("emailForm").onsubmit = async (e) => {
   try {
     let credential;
     if (isCreateAccountMode) {
-      // Create user with Email & Password in Firebase Authentication
       credential = await createUserWithEmailAndPassword(auth, emailVal, passVal);
     } else {
-      // Sign in user with verified Email & Password in Firebase Authentication
       credential = await signInWithEmailAndPassword(auth, emailVal, passVal);
     }
 
