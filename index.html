@@ -384,6 +384,7 @@ input::placeholder {
       </div>
 
       <button class="btn primary" id="emailSubmitBtn" type="submit">Sign In</button>
+      <button class="link" type="button" id="forgotPasswordBtn">Forgot password?</button>
       <button class="link" type="button" id="emailToggleModeBtn">Don't have an account? Create one</button>
       <button class="link" type="button" id="emailBackBtn">← Back to sign-in options</button>
     </form>
@@ -439,7 +440,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
@@ -593,10 +595,22 @@ $("googleBtn").onclick = async () => {
       `);
     } else if (err.code === "auth/unauthorized-domain") {
       showInfo(`
-        <strong>Domain authorization required:</strong><br>
-        Add this domain (<code>${window.location.hostname}</code>) to <em>Firebase Console &gt; Authentication &gt; Settings &gt; Authorized domains</em>.<br>
-        You can also sign in directly using <strong>Continue with Email</strong>.
+        <strong>Domain authorization required in Firebase:</strong><br>
+        Please add this domain to <em>Firebase Console &gt; Authentication &gt; Settings &gt; Authorized domains</em>:<br>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+          <code>${window.location.hostname}</code>
+          <button type="button" id="copyHostBtn" style="background:#7c6ff0;border:0;color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;">Copy Domain</button>
+        </div>
+        <div style="margin-top:8px;font-size:11.5px;color:#a8b3cc;">Or you can sign in directly using <strong>Continue with Email</strong> below.</div>
       `);
+      const copyBtn = document.getElementById("copyHostBtn");
+      if (copyBtn) {
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(window.location.hostname);
+          copyBtn.textContent = "Copied! ✓";
+          setTimeout(() => copyBtn.textContent = "Copy Domain", 2000);
+        };
+      }
     } else {
       showError(err.message || "Failed to sign in with Google. Please check your credentials or use email sign-in.");
     }
@@ -631,6 +645,7 @@ function setMode(createMode) {
     $("emailSub").textContent = "Enter your email and create a password of at least 6 characters.";
     $("emailSubmitBtn").textContent = "Create Account";
     $("emailToggleModeBtn").textContent = "Already have an account? Sign in";
+    $("forgotPasswordBtn").style.display = "none";
     $("password").autocomplete = "new-password";
   } else {
     $("emailBadge").textContent = "Email Sign In";
@@ -638,12 +653,33 @@ function setMode(createMode) {
     $("emailSub").textContent = "Enter your registered email and password to log in.";
     $("emailSubmitBtn").textContent = "Sign In";
     $("emailToggleModeBtn").textContent = "Don't have an account? Create one";
+    $("forgotPasswordBtn").style.display = "block";
     $("password").autocomplete = "current-password";
   }
 }
 
 $("emailToggleModeBtn").onclick = () => {
   setMode(!isCreateAccountMode);
+};
+
+// Forgot Password Handler
+$("forgotPasswordBtn").onclick = async () => {
+  clearError();
+  const emailVal = $("email").value.trim();
+  if (!emailVal || !emailVal.includes("@")) {
+    showError("Please enter your email address in the field above first, then click Forgot password.");
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, emailVal);
+    showInfo(`Password reset email sent to <strong>${emailVal}</strong>. Please check your inbox or spam folder.`);
+  } catch (err) {
+    if (err.code === "auth/user-not-found") {
+      showError("No account found with this email address.");
+    } else {
+      showError(err.message || "Failed to send password reset email.");
+    }
+  }
 };
 
 // 3. Email & Password Form Submission
