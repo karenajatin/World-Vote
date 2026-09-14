@@ -3,7 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Global Vote — Live Voting</title>
+<title>Global Vote — Live Voting | World Voting | Vote the World | Global Voting</title>
+<meta name="description" content="Vote the world with Global Vote — Live Voting and World Voting platform. Real-time global voting polls and live opinion results.">
+<meta name="keywords" content="Live Voting, World voting, Vote the world, Global voting, Global vote, live polls, vote online, real-time voting, public opinion polls, voting topics">
+<meta name="author" content="Global Vote">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="googlebot" content="index, follow">
+<meta name="google-site-verification" content="googled57c51397ea6b152">
+<link rel="canonical" href="https://ais-pre-7ltjzaj24hnjxet3drfo6f-90174351249.asia-east1.run.app/vote.html">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ais-pre-7ltjzaj24hnjxet3drfo6f-90174351249.asia-east1.run.app/vote.html">
+<meta property="og:title" content="Global Vote — Live Voting | World Voting | Vote the World | Global Voting">
+<meta property="og:description" content="Vote the world with Global Vote — Live Voting and World Voting platform. Real-time global voting polls.">
+<meta property="og:site_name" content="Global Vote — Live Voting">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://ais-pre-7ltjzaj24hnjxet3drfo6f-90174351249.asia-east1.run.app/vote.html">
+<meta name="twitter:title" content="Global Vote — Live Voting | World Voting | Vote the World | Global Voting">
+<meta name="twitter:description" content="Vote the world with Global Vote — Live Voting and World Voting platform. Real-time global voting polls.">
+
+<!-- Structured Data (JSON-LD) for Search Engines -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Global Vote — Live Voting & World Voting",
+  "alternateName": ["World voting", "Vote the world", "Global voting", "Live Voting"],
+  "url": "https://ais-pre-7ltjzaj24hnjxet3drfo6f-90174351249.asia-east1.run.app/vote.html",
+  "applicationCategory": "PollingApplication",
+  "operatingSystem": "All",
+  "description": "Live real-time polling topics and public voting system to vote the world"
+}
+</script>
 <style>
 :root {
   --bg: #0a0a12;
@@ -539,9 +573,9 @@ footer {
 </header>
 
 <section class="hero">
-  <span class="badge"><span class="live"></span>Live Realtime Polls</span>
-  <h1>What does the world choose?</h1>
-  <p>Select your choice on any topic. Results update live across the globe.</p>
+  <span class="badge"><span class="live"></span>Live Voting • Global Vote</span>
+  <h1>Vote the World — Live Voting</h1>
+  <p>World voting and global voting on trending topics. Select your choice and watch live votes update across the globe.</p>
 </section>
 
 <div class="stats">
@@ -562,8 +596,8 @@ footer {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getDatabase, ref, onValue, runTransaction, set, push } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getAuth, onAuthStateChanged, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getDatabase, ref, onValue, runTransaction, set, push, get } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAFO4mdALmJjQabTYbmsd6M7PdoS_Lo2Yw",
@@ -580,6 +614,10 @@ try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getDatabase(app);
+  if (auth) {
+    // Automatic logout when app or browser closes
+    setPersistence(auth, browserSessionPersistence).catch(err => console.warn("Session persistence:", err));
+  }
 } catch(e) {
   console.warn("Firebase init error:", e);
 }
@@ -647,7 +685,7 @@ const CANDY_STYLES = [
 let currentUser = null;
 let voterProfile = null;
 let counts = {};
-let myVotes = {}; // topicId -> optionIndex
+let myTapsCount = Number(sessionStorage.getItem("gv_my_taps") || 0);
 
 const $ = id => document.getElementById(id);
 
@@ -665,14 +703,8 @@ function toast(msg){
   window.tt = setTimeout(() => t.classList.remove("show"), 2200);
 }
 
-// Load local vote choices
-try {
-  myVotes = JSON.parse(localStorage.getItem("gv_my_choices") || "{}");
-} catch(_) {}
-
 function updateTapsDisplay(){
-  const totalMyVotes = Object.keys(myVotes).length;
-  $("myTaps").textContent = totalMyVotes;
+  $("myTaps").textContent = myTapsCount.toLocaleString();
 }
 updateTapsDisplay();
 
@@ -687,7 +719,6 @@ function render(q=""){
     const c = counts[t.id] || {};
     const cs = t.options.map((_, i) => Number(c[i] || 0));
     const total = cs.reduce((a, b) => a + b, 0);
-    const myChoiceIndex = myVotes[t.id];
 
     const card = document.createElement("article");
     card.className = "card";
@@ -698,13 +729,13 @@ function render(q=""){
       return `<div class="seg" style="flex-basis:${p}%;background:${style.barColor}">${esc(o.l)} ${Math.round(p)}%</div>`;
     }).join("");
 
+    // Clean buttons with NO checkmark (right mark) so users can vote unlimited times freely
     const btn = t.options.map((o, i) => {
-      const isChosen = myChoiceIndex === i;
       const style = CANDY_STYLES[i % CANDY_STYLES.length];
       return `
-        <button class="candy-neon-btn ${style.btnClass} ${isChosen ? 'my-choice' : ''}" data-t="${esc(t.id)}" data-i="${i}">
+        <button class="candy-neon-btn ${style.btnClass}" data-t="${esc(t.id)}" data-i="${i}">
           <span>${esc(o.l)}</span>
-          <span class="count">${cs[i].toLocaleString()} ${isChosen ? '<span class="check-icon">✓</span>' : ''}</span>
+          <span class="count">${cs[i].toLocaleString()}</span>
         </button>
       `;
     }).join("");
@@ -735,14 +766,15 @@ async function castVote(topicId, optionIndex){
   const tObj = topics.find(t => t.id === topicId);
   const optionLabel = tObj?.options[optionIndex]?.l || `Option ${optionIndex}`;
   
-  // Update local vote choice
-  myVotes[topicId] = optionIndex;
-  localStorage.setItem("gv_my_choices", JSON.stringify(myVotes));
+  // Track total votes cast by this user in current session
+  myTapsCount = (myTapsCount || 0) + 1;
+  sessionStorage.setItem("gv_my_taps", myTapsCount);
   updateTapsDisplay();
 
   // Instant UI optimistic update
   if (!counts[topicId]) counts[topicId] = {};
   counts[topicId][optionIndex] = (Number(counts[topicId][optionIndex]) || 0) + 1;
+  updateTotalVotesSummary();
   render($("search").value);
   toast(`Voted for ${optionLabel} ✨`);
 
@@ -863,19 +895,33 @@ function initializeVoterSession(user, profile){
 // Check Profile and Session
 async function checkAndStartUser(u){
   let prof = null;
-  // Try server
-  try {
-    const res = await fetch(`/api/profile/${u.uid}`);
-    if (res.ok) {
-      const d = await res.json();
-      if (d.profile) prof = d.profile;
+  // 1. Fetch from Firebase Realtime Database
+  if (db) {
+    try {
+      const snap = await get(ref(db, `users/${u.uid}/profile`));
+      if (snap.exists()) {
+        prof = snap.val();
+      }
+    } catch(e) {
+      console.warn("RTDB profile lookup failed:", e);
     }
-  } catch(_) {}
+  }
 
-  // Try localStorage
+  // 2. Try server
   if (!prof) {
     try {
-      prof = JSON.parse(localStorage.getItem(`gv_profile_${u.uid}`) || localStorage.getItem("gv_user_profile") || "null");
+      const res = await fetch(`/api/profile/${u.uid}`);
+      if (res.ok) {
+        const d = await res.json();
+        if (d.profile) prof = d.profile;
+      }
+    } catch(_) {}
+  }
+
+  // 3. Try UID-indexed local backup
+  if (!prof) {
+    try {
+      prof = JSON.parse(localStorage.getItem(`gv_profile_${u.uid}`) || "null");
     } catch(_) {}
   }
 
@@ -885,11 +931,22 @@ async function checkAndStartUser(u){
     return;
   }
 
+  // Store in sessionStorage (active only for this open app session)
+  sessionStorage.setItem("gv_current_user", JSON.stringify({
+    uid: u.uid,
+    displayName: prof.name,
+    email: u.email || prof.email || "",
+    photoURL: u.photoURL || ""
+  }));
+  sessionStorage.setItem("gv_user_profile", JSON.stringify(prof));
+  localStorage.setItem(`gv_profile_${u.uid}`, JSON.stringify(prof));
+
   initializeVoterSession(u, prof);
 }
 
 // Sign Out Handler
 $("logout").onclick = () => {
+  sessionStorage.clear();
   localStorage.removeItem("gv_current_user");
   localStorage.removeItem("gv_user_profile");
   if (auth && currentUser && currentUser.uid !== "guest") {
@@ -907,9 +964,9 @@ if (auth) {
     if (u) {
       checkAndStartUser(u);
     } else {
-      // Check localStorage session
-      const savedUser = JSON.parse(localStorage.getItem("gv_current_user") || "null");
-      const savedProf = JSON.parse(localStorage.getItem("gv_user_profile") || "null");
+      // Check session storage (active only in currently open window)
+      const savedUser = JSON.parse(sessionStorage.getItem("gv_current_user") || "null");
+      const savedProf = JSON.parse(sessionStorage.getItem("gv_user_profile") || "null");
       if (savedUser && savedProf && savedProf.name) {
         initializeVoterSession(savedUser, savedProf);
       } else {
@@ -918,9 +975,9 @@ if (auth) {
     }
   });
 } else {
-  const savedUser = JSON.parse(localStorage.getItem("gv_current_user") || "null");
-  const savedProf = JSON.parse(localStorage.getItem("gv_user_profile") || "null");
-  if (savedUser && savedProf) {
+  const savedUser = JSON.parse(sessionStorage.getItem("gv_current_user") || "null");
+  const savedProf = JSON.parse(sessionStorage.getItem("gv_user_profile") || "null");
+  if (savedUser && savedProf && savedProf.name) {
     initializeVoterSession(savedUser, savedProf);
   } else {
     window.location.href = "auth.html";

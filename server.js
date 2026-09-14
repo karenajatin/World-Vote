@@ -120,6 +120,16 @@ app.post('/api/vote', (req, res) => {
 });
 
 // Handle explicit routes for vote and auth pages
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  res.sendFile(path.join(__dirname, 'robots.txt'));
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.type('application/xml');
+  res.sendFile(path.join(__dirname, 'sitemap.xml'));
+});
+
 app.all('/api/*', (req, res) => {
   res.status(404).json({ error: 'Endpoint not found or disabled for privacy.' });
 });
