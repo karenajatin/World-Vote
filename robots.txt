@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /data/
 
-Sitemap: https://ais-pre-7ltjzaj24hnjxet3drfo6f-90174351249.asia-east1.run.app/sitemap.xml
+Sitemap: https://karenajatin.github.io/World-Vote/sitemap.xml
