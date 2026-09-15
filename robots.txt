@@ -4,3 +4,4 @@ Disallow: /api/
 Disallow: /data/
 
 Sitemap: https://karenajatin.github.io/World-Vote/sitemap.xml
+Sitemap: https://karenajatin.github.io/World-Vote/sitemap.txt
