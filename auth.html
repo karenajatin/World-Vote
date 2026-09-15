@@ -566,7 +566,7 @@ import {
   setPersistence,
   browserSessionPersistence
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getDatabase, ref, get, set, goOffline, goOnline } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAFO4mdALmJjQabTYbmsd6M7PdoS_Lo2Yw",
@@ -583,6 +583,10 @@ try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getDatabase(app);
+  if (db) {
+    // Keep offline by default so login page does not consume simultaneous connections
+    goOffline(db);
+  }
   if (auth) {
     // Automatic logout when user closes the browser/app
     setPersistence(auth, browserSessionPersistence).catch(err => {
@@ -592,6 +596,10 @@ try {
 } catch (e) {
   console.warn("Firebase initialization error:", e);
 }
+
+// Ensure database disconnects on page close/hide
+window.addEventListener("pagehide", () => { if (db) try { goOffline(db); } catch(_) {} });
+window.addEventListener("beforeunload", () => { if (db) try { goOffline(db); } catch(_) {} });
 
 // Clear legacy permanent session keys so closing the app always requires fresh login
 localStorage.removeItem("gv_current_user");
@@ -642,12 +650,15 @@ async function handleAuthenticatedUser(user) {
   // 1. Fetch from Firebase Realtime Database
   if (db) {
     try {
+      goOnline(db);
       const snap = await get(ref(db, `users/${user.uid}/profile`));
       if (snap.exists()) {
         profile = snap.val();
       }
     } catch (e) {
       console.warn("RTDB profile lookup failed:", e);
+    } finally {
+      try { goOffline(db); } catch(_) {}
     }
   }
 
@@ -924,9 +935,12 @@ $("profileForm").onsubmit = async (e) => {
   // 1. Save directly to Firebase Realtime Database
   if (db) {
     try {
+      goOnline(db);
       await set(ref(db, `users/${user.uid}/profile`), profile);
     } catch (err) {
       console.warn("RTDB profile save failed:", err);
+    } finally {
+      try { goOffline(db); } catch(_) {}
     }
   }
 

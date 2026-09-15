@@ -597,7 +597,7 @@ footer {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getDatabase, ref, onValue, runTransaction, set, push, get } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getDatabase, ref, onValue, runTransaction, set, push, get, goOffline, goOnline } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAFO4mdALmJjQabTYbmsd6M7PdoS_Lo2Yw",
@@ -949,12 +949,31 @@ $("logout").onclick = () => {
   sessionStorage.clear();
   localStorage.removeItem("gv_current_user");
   localStorage.removeItem("gv_user_profile");
+  if (db) {
+    try { goOffline(db); } catch(_) {}
+  }
   if (auth && currentUser && currentUser.uid !== "guest") {
     signOut(auth).finally(() => window.location.href = "auth.html");
   } else {
     window.location.href = "auth.html";
   }
 };
+
+// Automatic Firebase connection cleanup when user leaves or minimizes
+window.addEventListener("pagehide", () => {
+  if (db) { try { goOffline(db); } catch(_) {} }
+});
+window.addEventListener("beforeunload", () => {
+  if (db) { try { goOffline(db); } catch(_) {} }
+});
+document.addEventListener("visibilitychange", () => {
+  if (!db) return;
+  if (document.visibilityState === "hidden") {
+    try { goOffline(db); } catch(_) {}
+  } else if (document.visibilityState === "visible") {
+    try { goOnline(db); } catch(_) {}
+  }
+});
 
 $("search").oninput = e => render(e.target.value);
 
